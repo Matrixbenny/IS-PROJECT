@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeHunter Kenya - Find Your Perfect Home</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                HomeHunter Kenya
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="map-view.html">Map View</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <a href="#" class="btn btn-secondary" onclick="openModal('loginModal')">Login</a>
+                <a href="#" class="btn btn-primary" onclick="openModal('registerModal')">Register</a>
+            </div>
+            <div class="user-menu hidden" id="userMenu">
+                <button class="btn btn-primary" onclick="showDashboard()">
+                    <i class="fas fa-user"></i> Dashboard
+                </button>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container main-content">
+        <section class="hero fade-in">
+            <h1>Find Your Perfect Home in Kenya</h1>
+            <p>Discover amazing properties with AI-powered recommendations and detailed neighborhood insights</p>
+        </section>
+
+        <section class="dashboard" id="userDashboard">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <div>
+                        <h3 id="userName">John Doe</h3>
+                        <p id="userEmail">john.doe@email.com</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="hideDashboard()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="showTab('favorites')">
+                    <i class="fas fa-heart"></i> Favorites
+                </button>
+                <button class="tab-btn" onclick="showTab('history')">
+                    <i class="fas fa-history"></i> Search History
+                </button>
+                <button class="tab-btn" onclick="showTab('preferences')">
+                    <i class="fas fa-cog"></i> Preferences
+                </button>
+            </div>
+
+            <div class="tab-content active" id="favoritesTab">
+                <h3>Your Favorite Properties</h3>
+                <div class="favorites-grid" id="favoritesList">
+                    </div>
+            </div>
+
+            <div class="tab-content" id="historyTab">
+                <h3>Search History</h3>
+                <div id="searchHistory">
+                    </div>
+            </div>
+
+            <div class="tab-content" id="preferencesTab">
+                <h3>Your Preferences</h3>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label>Preferred Budget Range</label>
+                        <input type="text" id="prefBudget" placeholder="e.g., KSh 50,000 - 100,000">
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Location</label>
+                        <input type="text" id="prefLocation" placeholder="e.g., Nairobi, Westlands">
+                    </div>
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <select id="prefType">
+                            <option>Apartment</option>
+                            <option>House</option>
+                            <option>Bedsitter</option>
+                            <option>Studio</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-section fade-in">
+            <h2 class="text-center mb-2">Find Your Ideal Property</h2>
+            <form class="search-form" onsubmit="searchProperties(event)">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="Enter location (e.g., Nairobi, Westlands)">
+                </div>
+                <div class="form-group">
+                    <label for="propertyType">Property Type</label>
+                    <select id="propertyType">
+                        <option value="">All Types</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="house">House</option>
+                        <option value="bedsitter">Bedsitter</option>
+                        <option value="studio">Studio</option>
+                        <option value="mansion">Mansion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="minPrice">Min Price (KSh)</label>
+                    <input type="number" id="minPrice" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label for="maxPrice">Max Price (KSh)</label>
+                    <input type="number" id="maxPrice" placeholder="500000">
+                </div>
+                <div class="form-group">
+                    <label for="bedrooms">Bedrooms</label>
+                    <select id="bedrooms">
+                        <option value="">Any</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4+</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search Properties
+                </button>
+            </form>
+        </section>
+
+        <section class="ai-section fade-in">
+            <div class="ai-header">
+                <div class="ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h2>AI-Powered Recommendations</h2>
+                    <p>Based on your preferences and search history</p>
+                </div>
+            </div>
+            <div class="properties-grid" id="aiRecommendations">
+                </div>
+        </section>
+
+        <section class="properties-section fade-in">
+            <h2 class="text-center mb-2">Available Properties</h2>
+            <div class="properties-grid" id="propertiesGrid">
+                </div>
+        </section>
+
+        <section class="map-container fade-in" id="mapSection">
+            <h2 class="text-center mb-2">Property Locations</h2>
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                <h3>Interactive Map View</h3>
+                <p>Google Maps integration showing property locations and neighborhood details</p>
+                <button class="btn btn-primary mt-2" onclick="loadMap()">
+                    <i class="fas fa-map"></i> Load Map View
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login to Your Account</h2>
+            <form class="form-container" id="loginForm"> <input type="email" id="loginEmail" placeholder="Email Address" required>
+                <div class="form-group password-input-container">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <span class="password-toggle" onclick="togglePasswordVisibility('loginPassword')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <p class="text-center mt-2">
+                Don't have an account?
+                <a href="#" onclick="closeModal('loginModal'); openModal('registerModal')">Register here</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Create Your Account</h2>
+            <form class="form-container" id="registerForm"> <input type="text" id="registerName" placeholder="Full Name" required>
+                <input type="email" id="registerEmail" placeholder="Email Address" required>
+                <input type="tel" id="registerPhone" placeholder="Phone Number" required>
+                <div class="form-group password-input-container">
+                    <input type="password" id="registerPassword" placeholder="Password" required>
+                    <span class="password-toggle" onclick="togglePasswordVisibility('registerPassword')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <select id="registerRole" required>
+                    <option value="">Select User Type</option>
+                    <option value="tenant">Tenant</option>
+                    <option value="agent">Real Estate Agent</option>
+                </select>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            </form>
+            <p class="text-center mt-2">
+                Already have an account?
+                <a href="#" onclick="closeModal('registerModal'); openModal('loginModal')">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 HomeHunter Kenya. All rights reserved. | Developed by Mwangi Benvictor & Karimi Whitney</p>
+            <p>Strathmore University - Information Systems Project</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

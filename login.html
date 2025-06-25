@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .container {
+      border: 1px solid #ccc;
+      width: 400px;
+      background: white;
+      padding: 20px 30px;
+    }
+
+    .header {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+    }
+
+    .header button {
+      background: #d9dbe2;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: default;
+    }
+
+    h2 {
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    .forgot {
+      float: right;
+      margin-top: 25px;
+    }
+
+    .form-group {
+      margin: 15px 0;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .checkbox-group {
+      margin: 10px 0;
+    }
+
+    .checkbox-group label {
+      margin-left: 5px;
+    }
+
+    .btn {
+      width: 100%;
+      background: #7d8191;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 45%;
+      height: 1px;
+      background: #ccc;
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .divider span {
+      background: #fff;
+      padding: 0 10px;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button disabled>LOGIN</button>
+    </div>
+
+    <h2>Sign in</h2>
+    <a href="#" class="forgot">Forgot password?</a>
+
+    <div class="form-group">
+      <input type="text" placeholder="User ID">
+    </div>
+    <div class="form-group">
+      <input type="password" placeholder="Password">
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="show-password" checked>
+      <label for="show-password">Show password</label><br>
+      <input type="checkbox" id="keep-signed-in">
+      <label for="keep-signed-in">Keep me signed in.</label>
+    </div>
+
+    <button class="btn">Sign in</button>
+
+    <div class="divider"><span>New Account</span></div>
+
+    <button class="btn">Create new account</button>
+
+    <p class="footer-text">Sign Up for Login account</p>
+  </div>
+</body>
+</html>

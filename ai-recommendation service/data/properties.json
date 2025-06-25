@@ -1,0 +1,68 @@
+[
+    {
+      "id": "prop1",
+      "title": "Modern 2-Bedroom Apartment",
+      "location": "Westlands, Nairobi",
+      "price": 85000,
+      "type": "apartment",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "features": ["Parking", "Security", "Gym", "Pool"],
+      "description": "Beautiful modern apartment in the heart of Westlands with excellent amenities."
+    },
+    {
+      "id": "prop2",
+      "title": "Spacious Family House",
+      "location": "Karen, Nairobi",
+      "price": 150000,
+      "type": "house",
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "features": ["Garden", "Parking", "Security", "DSQ"],
+      "description": "Spacious family home in Karen with a beautiful garden and servant quarters."
+    },
+    {
+      "id": "prop3",
+      "title": "Cozy Studio Apartment",
+      "location": "Kilimani, Nairobi",
+      "price": 45000,
+      "type": "studio",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "features": ["Parking", "Security", "WiFi"],
+      "description": "Perfect studio apartment for young professionals in Kilimani."
+    },
+    {
+      "id": "prop4",
+      "title": "Luxury Penthouse",
+      "location": "Upper Hill, Nairobi",
+      "price": 250000,
+      "type": "apartment",
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "features": ["Parking", "Security", "Gym", "Pool", "Balcony", "City View"],
+      "description": "Luxury penthouse with stunning city views and premium amenities."
+    },
+    {
+      "id": "prop5",
+      "title": "Affordable Bedsitter",
+      "location": "Kasarani, Nairobi",
+      "price": 25000,
+      "type": "bedsitter",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "features": ["Security", "Water"],
+      "description": "Affordable bedsitter in a quiet neighborhood with good transport links."
+    },
+    {
+      "id": "prop6",
+      "title": "Executive Mansion",
+      "location": "Runda, Nairobi",
+      "price": 400000,
+      "type": "mansion",
+      "bedrooms": 5,
+      "bathrooms": 5,
+      "features": ["Garden", "Parking", "Security", "Pool", "DSQ", "Study"],
+      "description": "Executive mansion in Runda with all modern amenities and beautiful landscaping."
+    }
+  ]
