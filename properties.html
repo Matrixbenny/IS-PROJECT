@@ -26,123 +26,72 @@
                 <a href="register.html" class="btn btn-primary">Register</a>
             </div>
             <div class="user-menu hidden" id="userMenu">
-                <button class="btn btn-primary" onclick="showDashboard()">
+                <div class="user-avatar" id="userAvatarDisplay"></div> <span class="user-name" id="userNameDisplay"></span> <button class="btn btn-primary" onclick="showDashboard()">
                     <i class="fas fa-user"></i> Dashboard
                 </button>
                 <button class="btn btn-secondary" onclick="logout()">Logout</button>
             </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
         </nav>
     </header>
 
-    <main class="container main-content">
-        <section class="properties-section fade-in">
-            <h2 class="text-center mb-2">Available Properties</h2>
+    <main class="properties-page">
+        <section class="search-filter-section container">
+            <h2>Find Your Next Home</h2>
+            <form class="search-bar-hero" id="searchForm">
+                <input type="text" id="location" placeholder="Enter location (e.g., Nairobi, Mombasa)">
+                <select id="propertyType">
+                    <option value="">Property Type</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="townhouse">Townhouse</option>
+                    <option value="commercial">Commercial</option>
+                </select>
+                <input type="number" id="minPrice" placeholder="Min Price">
+                <input type="number" id="maxPrice" placeholder="Max Price">
+                <select id="bedrooms">
+                    <option value="">Beds</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <select id="bathrooms">
+                    <option value="">Baths</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                </select>
+                <button type="submit" class="btn-hero"><i class="fas fa-search"></i> Search</button>
+            </form>
+        </section>
+
+        <section class="properties-list container">
+            <h2 class="text-center mb-2">All Properties</h2>
             <div class="properties-grid" id="propertiesGrid">
                 <div class="property-card">
                     <div class="property-image">
                         <i class="fas fa-image"></i>
                     </div>
                     <div class="property-info">
-                        <h3 class="property-title">Spacious Family Home</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Karen, Nairobi</p>
-                        <p class="property-price">KSh 120,000/month</p>
+                        <h3 class="property-title">Loading properties...</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Please wait</p>
+                        <p class="property-price">...</p>
                         <div class="property-features">
-                            <span class="feature"><i class="fas fa-bed"></i> 4 Beds</span>
-                            <span class="feature"><i class="fas fa-bath"></i> 3 Baths</span>
-                            <span class="feature"><i class="fas fa-car"></i> 2 Parking</span>
+                            <span class="feature"><i class="fas fa-bed"></i> ... Beds</span>
+                            <span class="feature"><i class="fas fa-bath"></i> ... Bath</span>
                         </div>
                         <div class="property-actions">
                             <button class="btn btn-primary btn-small">View Details</button>
-                            <button class="btn btn-secondary btn-small"><i class="fas fa-heart"></i> Favorite</button>
                         </div>
-                    </div>
-                </div>
-                <div class="property-card">
-                    <div class="property-image">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <div class="property-info">
-                        <h3 class="property-title">Modern Apartment</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Kilimani, Nairobi</p>
-                        <p class="property-price">KSh 85,000/month</p>
-                        <div class="property-features">
-                            <span class="feature"><i class="fas fa-bed"></i> 2 Beds</span>
-                            <span class="feature"><i class="fas fa-bath"></i> 2 Baths</span>
-                            <span class="feature"><i class="fas fa-car"></i> 1 Parking</span>
-                        </div>
-                        <div class="property-actions">
-                            <button class="btn btn-primary btn-small">View Details</button>
-                            <button class="btn btn-secondary btn-small"><i class="fas fa-heart"></i> Favorite</button>
-                        </div>
-                    </div>
-                </div>
-                </div>
-        </section>
-
-        <section id="propertyDetailsSection" class="hidden property-details-section fade-in">
-            <button class="btn btn-secondary mb-2" onclick="hidePropertyDetails()">
-                <i class="fas fa-arrow-left"></i> Back to Properties
-            </button>
-            <div class="property-detail-card">
-                <div class="detail-gallery">
-                    <img src="https://via.placeholder.com/600x400?text=Property+Large+Image" alt="Property Image" id="detailImage">
-                    <div class="thumbnail-gallery" id="thumbnailGallery">
-                        <img src="https://via.placeholder.com/100x70?text=Thumb1" alt="Thumbnail 1" class="active">
-                        <img src="https://via.placeholder.com/100x70?text=Thumb2" alt="Thumbnail 2">
-                        <img src="https://via.placeholder.com/100x70?text=Thumb3" alt="Thumbnail 3">
-                    </div>
-                </div>
-                <div class="detail-info">
-                    <h2 id="detailTitle"></h2>
-                    <p class="detail-location"><i class="fas fa-map-marker-alt"></i> <span id="detailLocation"></span></p>
-                    <p class="detail-price" id="detailPrice"></p>
-                    <div class="detail-features">
-                        <span class="feature"><i class="fas fa-bed"></i> <span id="detailBeds"></span> Beds</span>
-                        <span class="feature"><i class="fas fa-bath"></i> <span id="detailBaths"></span> Baths</span>
-                        <span class="feature"><i class="fas fa-car"></i> <span id="detailParking"></span> Parking</span>
-                    </div>
-                    <p class="detail-description" id="detailDescription"></p>
-                    <div class="detail-actions">
-                        <button class="btn btn-primary"><i class="fas fa-phone-alt"></i> Contact Agent</button>
-                        <button class="btn btn-secondary"><i class="fas fa-heart"></i> Add to Favorites</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="agentContactSection" class="hidden agent-contact-section fade-in">
-            <h2 class="text-center mb-2">Contact Agent</h2>
-            <div class="agent-card">
-                <div class="agent-info">
-                    <div class="agent-avatar">AG</div>
-                    <div>
-                        <h3>Agent Name</h3>
-                        <p>Real Estate Agent</p>
-                    </div>
-                </div>
-                <div class="agent-contact-details">
-                    <p><i class="fas fa-phone-alt"></i> +254 7XX XXX XXX</p>
-                    <p><i class="fas fa-envelope"></i> agent@example.com</p>
-                </div>
-                <form class="contact-form">
-                    <div class="form-group">
-                        <label for="contactName">Your Name</label>
-                        <input type="text" id="contactName" placeholder="Enter your name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactEmail">Your Email</label>
-                        <input type="email" id="contactEmail" placeholder="Enter your email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactMessage">Message</label>
-                        <textarea id="contactMessage" rows="5" placeholder="I'm interested in this property..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-            </div>
-        </section>
-
-        <section id="relatedPropertiesSection" class="hidden properties-section fade-in">
+        <section class="properties-section container">
             <h2 class="text-center mb-2">Related Properties You Might Like</h2>
             <div class="properties-grid" id="relatedPropertiesGrid">
                 <div class="property-card">
@@ -150,12 +99,12 @@
                         <i class="fas fa-image"></i>
                     </div>
                     <div class="property-info">
-                        <h3 class="property-title">Compact Townhouse</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Kileleshwa, Nairobi</p>
-                        <p class="property-price">KSh 70,000/month</p>
+                        <h3 class="property-title">Loading related...</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Please wait</p>
+                        <p class="property-price">...</p>
                         <div class="property-features">
-                            <span class="feature"><i class="fas fa-bed"></i> 2 Beds</span>
-                            <span class="feature"><i class="fas fa-bath"></i> 1 Bath</span>
+                            <span class="feature"><i class="fas fa-bed"></i> ... Beds</span>
+                            <span class="feature"><i class="fas fa-bath"></i> ... Bath</span>
                         </div>
                         <div class="property-actions">
                             <button class="btn btn-primary btn-small">View Details</button>
@@ -173,6 +122,7 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
