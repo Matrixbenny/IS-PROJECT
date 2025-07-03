@@ -1,6 +1,6 @@
 /* css/auth.css */
 body.auth-page {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Consistent font */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Maintain branding gradient */
     display: flex;
     justify-content: center;
@@ -34,112 +34,81 @@ body.auth-page {
     background: #f0f2f5; /* Light grey */
     border: none;
     padding: 12px 25px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 25px;
-    transition: all 0.3s ease;
+    border-radius: 25px; /* Pill shape */
+    text-decoration: none;
     color: #666;
-    text-decoration: none; /* For anchor tags */
-    display: inline-block;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.auth-header .auth-btn.active,
-.auth-header .auth-btn:hover {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+.auth-header .auth-btn.active {
+    background: linear-gradient(45deg, #667eea, #764ba2); /* Branding gradient */
     color: white;
-    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
-.auth-container h2 {
+.auth-header .auth-btn:hover:not(.active) {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+h2 {
     font-size: 2rem;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     color: #333;
-    text-align: center;
 }
 
 .form-group {
-    margin-bottom: 15px; /* Consistent spacing */
-    position: relative; /* For password toggle */
+    margin-bottom: 20px;
+    text-align: left; /* Align labels and inputs to the left */
 }
 
 .form-group label {
     display: block;
-    text-align: left;
     margin-bottom: 8px;
     font-weight: 600;
     color: #555;
-    font-size: 0.95rem;
 }
 
-.form-group input[type="email"],
-.form-group input[type="password"],
 .form-group input[type="text"],
+.form-group input[type="email"],
 .form-group input[type="tel"],
+.form-group input[type="password"],
 .form-group select {
     width: 100%;
     padding: 12px 15px;
-    box-sizing: border-box;
-    border: 2px solid #e1e5e9;
-    border-radius: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* Match auth-container border-radius for consistency */
     font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); /* Focus glow */
+    outline: none;
 }
 
 .password-input-container {
     position: relative;
 }
 
-.password-input-container input {
-    padding-right: 2.8rem !important; /* Make space for the icon */
-}
-
 .password-toggle {
     position: absolute;
     right: 15px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(calc(-50% + 4px)); /* Adjust to align with input text */
     cursor: pointer;
     color: #888;
-    font-size: 1rem;
-}
-
-.password-toggle:hover {
-    color: #555;
-}
-
-.checkbox-group {
-    margin: 15px 0 25px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-}
-
-.checkbox-group input[type="checkbox"] {
-    margin-right: 8px;
-    transform: scale(1.1); /* Slightly larger checkbox */
-}
-
-.checkbox-group label {
     font-size: 0.95rem;
-    color: #666;
-    font-weight: normal; /* Override form-group label bold */
-    margin-bottom: 0;
 }
 
 .btn-auth {
     width: 100%;
+    padding: 15px;
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
-    padding: 12px;
-    margin-top: 15px;
     border: none;
     border-radius: 10px; /* Match input fields */
     font-size: 1.1rem;
@@ -184,7 +153,7 @@ body.auth-page {
     top: 50%;
     width: 40%; /* Adjusted width */
     height: 1px;
-    background: #e1e5e9; /* Lighter line */
+    background: #ddd;
 }
 
 .divider::before {
@@ -196,21 +165,22 @@ body.auth-page {
 }
 
 .divider span {
-    background: #fff;
-    padding: 0 15px;
+    background: white;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
 }
 
 .alt-action-text {
-    font-size: 0.9rem;
-    text-align: center;
-    margin-top: 25px;
+    font-size: 0.95rem;
     color: #666;
+    margin-top: 30px;
 }
 
 .alt-action-text a {
     color: #667eea;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
     transition: color 0.3s;
 }
 
@@ -218,10 +188,19 @@ body.auth-page {
     color: #764ba2;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
+/* --- Responsive adjustments for Auth pages --- */
+@media (max-width: 480px) {
     .auth-container {
-        margin: 20px;
-        padding: 25px 30px;
+        padding: 20px 25px;
+        margin: 15px;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    .auth-header .auth-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
     }
 }
