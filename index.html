@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HomeHunter Kenya - Find Your Perfect Home</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="css/style.css"> </head>
 <body>
     <header>
         <nav class="container">
@@ -40,8 +39,7 @@
             <p>Discover amazing properties with AI-powered recommendations and detailed neighborhood insights</p>
         </section>
 
-        <section class="dashboard" id="userDashboard">
-            <div class="dashboard-header">
+        <section class="dashboard hidden" id="userDashboard"> <div class="dashboard-header">
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar">JD</div>
                     <div>
@@ -96,6 +94,7 @@
                             <option>House</option>
                             <option>Bedsitter</option>
                             <option>Studio</option>
+                            <option>Mansion</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
@@ -171,7 +170,7 @@
                 <i class="fas fa-map-marked-alt" style="font-size: 4rem; margin-bottom: 1rem;"></i>
                 <h3>Interactive Map View</h3>
                 <p>Google Maps integration showing property locations and neighborhood details</p>
-                <button class="btn btn-primary mt-2" onclick="loadMap()">
+                <button class="btn btn-primary mt-2" onclick="window.location.href='map-view.html'">
                     <i class="fas fa-map"></i> Load Map View
                 </button>
             </div>
@@ -182,7 +181,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('loginModal')">&times;</span>
             <h2>Login to Your Account</h2>
-            <form class="form-container" id="loginForm"> <input type="email" id="loginEmail" placeholder="Email Address" required>
+            <form class="form-container" onsubmit="login(event)"> <input type="email" id="loginEmail" placeholder="Email Address" required>
                 <div class="form-group password-input-container">
                     <input type="password" id="loginPassword" placeholder="Password" required>
                     <span class="password-toggle" onclick="togglePasswordVisibility('loginPassword')">
@@ -202,7 +201,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('registerModal')">&times;</span>
             <h2>Create Your Account</h2>
-            <form class="form-container" id="registerForm"> <input type="text" id="registerName" placeholder="Full Name" required>
+            <form class="form-container" onsubmit="register(event)"> <input type="text" id="registerName" placeholder="Full Name" required>
                 <input type="email" id="registerEmail" placeholder="Email Address" required>
                 <input type="tel" id="registerPhone" placeholder="Phone Number" required>
                 <div class="form-group password-input-container">
@@ -232,6 +231,5 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
-</body>
+    <script src="js/script.js"></script> </body>
 </html>
