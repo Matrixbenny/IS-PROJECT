@@ -15,7 +15,7 @@
                 HomeHunter Kenya
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#home">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="properties.html">Properties</a></li>
                 <li><a href="map-view.html">Map View</a></li>
                 <li><a href="about.html">About</a></li>
@@ -26,131 +26,58 @@
                 <a href="register.html" class="btn btn-primary">Register</a>
             </div>
             <div class="user-menu hidden" id="userMenu">
-                <button class="btn btn-primary" onclick="showDashboard()">
+                <div class="user-avatar" id="userAvatarDisplay"></div> <span class="user-name" id="userNameDisplay"></span> <button class="btn btn-primary" onclick="showDashboard()">
                     <i class="fas fa-user"></i> Dashboard
                 </button>
                 <button class="btn btn-secondary" onclick="logout()">Logout</button>
             </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
         </nav>
     </header>
 
-    <main class="container main-content">
-        <section class="hero fade-in">
-            <h1>Find Your Perfect Home in Kenya</h1>
-            <p>Discover amazing properties with AI-powered recommendations and detailed neighborhood insights</p>
-        </section>
-
-        <section class="dashboard hidden" id="userDashboard">
-            <div class="dashboard-header">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">JD</div>
-                    <div>
-                        <h3 id="userName">John Doe</h3>
-                        <p id="userEmail">john.doe@email.com</p>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="hideDashboard()">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-
-            <div class="dashboard-tabs">
-                <button class="tab-btn active" onclick="showTab('favorites')">
-                    <i class="fas fa-heart"></i> Favorites
-                </button>
-                <button class="tab-btn" onclick="showTab('history')">
-                    <i class="fas fa-history"></i> Search History
-                </button>
-                <button class="tab-btn" onclick="showTab('preferences')">
-                    <i class="fas fa-cog"></i> Preferences
-                </button>
-            </div>
-
-            <div class="tab-content active" id="favoritesTab">
-                <h3>Your Favorite Properties</h3>
-                <div class="favorites-grid" id="favoritesList">
-                    </div>
-            </div>
-
-            <div class="tab-content" id="historyTab">
-                <h3>Search History</h3>
-                <div id="searchHistory">
-                    </div>
-            </div>
-
-            <div class="tab-content" id="preferencesTab">
-                <h3>Your Preferences</h3>
-                <div class="search-form">
-                    <div class="form-group">
-                        <label>Preferred Budget Range</label>
-                        <input type="text" id="prefBudget" placeholder="e.g., KSh 50,000 - 100,000">
-                    </div>
-                    <div class="form-group">
-                        <label>Preferred Location</label>
-                        <input type="text" id="prefLocation" placeholder="e.g., Nairobi, Westlands">
-                    </div>
-                    <div class="form-group">
-                        <label>Property Type</label>
-                        <select id="prefType">
-                            <option>Apartment</option>
-                            <option>House</option>
-                            <option>Bedsitter</option>
-                            <option>Studio</option>
-                            <option>Mansion</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="search-section fade-in">
-            <h2 class="text-center mb-2">Find Your Ideal Property</h2>
-            <form class="search-form" onsubmit="searchProperties(event)">
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" placeholder="Enter location (e.g., Nairobi, Westlands)">
-                </div>
-                <div class="form-group">
-                    <label for="propertyType">Property Type</label>
+    <main>
+        <section class="hero-section">
+            <div class="container text-center">
+                <h1>Find Your Dream Home in Kenya</h1>
+                <p class="hero-subtitle">Discover thousands of properties for sale and rent across Kenya.</p>
+                <form class="search-bar-hero" id="searchForm">
+                    <input type="text" id="location" placeholder="Enter location (e.g., Nairobi, Mombasa)">
                     <select id="propertyType">
-                        <option value="">All Types</option>
+                        <option value="">Property Type</option>
                         <option value="apartment">Apartment</option>
                         <option value="house">House</option>
-                        <option value="bedsitter">Bedsitter</option>
-                        <option value="studio">Studio</option>
-                        <option value="mansion">Mansion</option>
+                        <option value="townhouse">Townhouse</option>
+                        <option value="commercial">Commercial</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="minPrice">Min Price (KSh)</label>
-                    <input type="number" id="minPrice" placeholder="0">
-                </div>
-                <div class="form-group">
-                    <label for="maxPrice">Max Price (KSh)</label>
-                    <input type="number" id="maxPrice" placeholder="500000">
-                </div>
-                <div class="form-group">
-                    <label for="bedrooms">Bedrooms</label>
-                    <select id="bedrooms">
-                        <option value="">Any</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4+</option>
-                    </select>
-                </div>
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-search"></i> Search Properties
-                </button>
-            </form>
+                    <input type="number" id="minPrice" placeholder="Min Price">
+                    <input type="number" id="maxPrice" placeholder="Max Price">
+                    <button type="submit" class="btn-hero"><i class="fas fa-search"></i> Search</button>
+                </form>
+            </div>
         </section>
 
-        <section class="ai-section fade-in">
-            <div class="ai-header">
-                <div class="ai-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
+        <section class="quick-links container fade-in">
+            <div class="quick-link-card">
+                <i class="fas fa-search-location"></i>
+                <h3>Explore Areas</h3>
+                <p>Discover popular neighborhoods and cities.</p>
+            </div>
+            <div class="quick-link-card">
+                <i class="fas fa-handshake"></i>
+                <h3>Sell Your Property</h3>
+                <p>List your property with us for free.</p>
+            </div>
+            <div class="quick-link-card">
+                <i class="fas fa-calculator"></i>
+                <h3>Mortgage Calculator</h3>
+                <p>Estimate your monthly repayments.</p>
+            </div>
+        </section>
+
+        <section class="properties-section container fade-in">
+            <div class="section-header">
                 <div>
                     <h2>AI-Powered Recommendations</h2>
                     <p>Based on your preferences and search history</p>
@@ -186,6 +113,7 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
