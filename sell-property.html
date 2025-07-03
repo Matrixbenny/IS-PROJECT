@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Property - HomeHunter Kenya</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific styles for sell-property.html if needed, otherwise rely on general style.css */
+        .sell-property-section {
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .sell-property-section h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .verification-info {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            color: #1890ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .verification-info strong {
+            color: #096dd9;
+        }
+
+        .document-upload-group {
+            margin-bottom: 20px;
+        }
+
+        .document-upload-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .document-upload-group input[type="file"] {
+            display: block;
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                HomeHunter Kenya
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="map-view.html">Map View</a></li>
+                <li><a href="sell-property.html">Sell Your Property</a></li>
+                <li><a href="mortgage-calculator.html">Mortgage Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+            <div class="user-menu hidden" id="userMenu">
+                <div class="user-avatar" id="userAvatarDisplay"></div>
+                <span class="user-name" id="userNameDisplay"></span>
+                <button class="btn btn-primary btn-small" onclick="showDashboard()">
+                    <i class="fas fa-user"></i> Dashboard
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="sell-property-section">
+            <div class="container">
+                <h1>Become a Verified Seller on HomeHunter Kenya</h1>
+                <p class="verification-info">
+                    <strong>For Agents & Landlords:</strong> Submit your details below to become a verified seller. Our admin team will review your application to ensure legitimacy and prevent scams. Upon successful verification, you'll gain access to list properties for a fee.
+                </p>
+
+                <form id="sellerRegistrationForm">
+                    <div class="form-group">
+                        <label for="sellerName"><i class="fas fa-user"></i> Your Full Name</label>
+                        <input type="text" id="sellerName" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerEmail"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="sellerEmail" placeholder="email@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="sellerPhone" placeholder="+2547XXXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyName"><i class="fas fa-building"></i> Company Name (Optional)</label>
+                        <input type="text" id="companyName" placeholder="e.g., ABC Real Estate">
+                    </div>
+                    <div class="form-group">
+                        <label for="businessLocation"><i class="fas fa-map-marker-alt"></i> Business Location/Area of Operation</label>
+                        <input type="text" id="businessLocation" placeholder="e.g., Nairobi CBD, Mombasa">
+                    </div>
+                    <div class="document-upload-group">
+                        <label for="businessLicense"><i class="fas fa-file-alt"></i> Upload Business License / National ID (for verification)</label>
+                        <input type="file" id="businessLicense" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <small>Accepted formats: PDF, JPG, PNG. Max file size: 5MB.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerMessage"><i class="fas fa-comment-alt"></i> Tell us more about yourself or your business</label>
+                        <textarea id="sellerMessage" rows="4" placeholder="Briefly describe your experience or why you want to sell properties with us..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit for Verification</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 HomeHunter Kenya. All rights reserved. | Developed by Mwangi Benvictor & Karimi Whitney</p>
+            <p>Strathmore University - Information Systems Project</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Placeholder for client-side submission logic
+        document.getElementById('sellerRegistrationForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // In a real application, you would send this data to your backend API.
+            // Example using FormData for file uploads:
+            const formData = new FormData();
+            formData.append('name', document.getElementById('sellerName').value);
+            formData.append('email', document.getElementById('sellerEmail').value);
+            formData.append('phone', document.getElementById('sellerPhone').value);
+            formData.append('companyName', document.getElementById('companyName').value);
+            formData.append('businessLocation', document.getElementById('businessLocation').value);
+            formData.append('businessLicense', document.getElementById('businessLicense').files[0]);
+            formData.append('message', document.getElementById('sellerMessage').value);
+
+            // Assuming a backend endpoint like /api/seller-applications
+            // const backendUrl = 'http://localhost:5000/api/seller-applications';
+            // try {
+            //     const response = await fetch(backendUrl, {
+            //         method: 'POST',
+            //         body: formData // FormData handles content-type for files
+            //     });
+            //     const data = await response.json();
+            //     if (response.ok) {
+            //         alert('Application submitted successfully! We will review your details and get back to you shortly.');
+            //         this.reset(); // Clear form
+            //     } else {
+            //         alert(`Submission failed: ${data.message || 'Please try again.'}`);
+            //     }
+            // } catch (error) {
+            //     console.error('Error submitting seller application:', error);
+            //     alert('An error occurred during submission. Please try again later.');
+            // }
+
+            // For now, just a client-side alert:
+            alert('Application submitted successfully! Our admin will review your details for verification.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
