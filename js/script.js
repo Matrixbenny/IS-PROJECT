@@ -22,7 +22,7 @@ const sampleProperties = [
         features: ["Parking", "Security", "Gym", "Pool"],
         coordinates: { lat: -1.2676, lng: 36.8108 },
         description: "Beautiful modern apartment in the heart of Westlands with excellent amenities.",
-        imageUrl: "https://via.placeholder.com/400x200/667eea/ffffff?text=Apartment+Image"
+        imageUrl: "images/properties/apartment_westlands.jpg"
     },
     {
         id: "prop2",
