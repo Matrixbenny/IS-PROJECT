@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Property Details - HomeHunter Kenya</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .property-gallery img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .map-box {
+      height: 400px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1 id="propertyTitle">Property Details</h1>
+    <p id="propertyLocation"></p>
+    <p id="propertyPrice"></p>
+    <p id="propertyDescription"></p>
+    <p><strong>Bedrooms:</strong> <span id="propertyBeds"></span></p>
+    <p><strong>Bathrooms:</strong> <span id="propertyBaths"></span></p>
+    <p><strong>Type:</strong> <span id="propertyType"></span></p>
+    <p><strong>Features:</strong> <span id="propertyFeatures"></span></p>
+    <p><strong>Owner Contact:</strong> <span id="propertyOwnerPhone"></span></p>
+
+    <h2>Photos</h2>
+    <div class="property-gallery" id="propertyImages"></div>
+
+    <h2>Location</h2>
+    <div id="map" class="map-box"></div>
+  </main>
+
+  <script>
+    const backendUrl = 'http://localhost:5000/api';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('id');
+
+    if (!propertyId) {
+      alert('No property ID specified');
+      window.location.href = 'index.html';
+    }
+
+    async function loadProperty() {
+      try {
+        const res = await fetch(`${backendUrl}/properties/${propertyId}`);
+        const p = await res.json();
+
+        document.getElementById('propertyTitle').textContent = p.title;
+        document.getElementById('propertyLocation').textContent = p.location;
+        document.getElementById('propertyPrice').textContent = `Ksh ${p.price.toLocaleString()}`;
+        document.getElementById('propertyDescription').textContent = p.description;
+        document.getElementById('propertyBeds').textContent = p.bedrooms;
+        document.getElementById('propertyBaths').textContent = p.bathrooms;
+        document.getElementById('propertyType').textContent = p.type;
+        document.getElementById('propertyFeatures').textContent = (p.features || []).join(', ');
+        document.getElementById('propertyOwnerPhone').textContent = p.ownerPhone || 'Not Provided';
+
+        const gallery = document.getElementById('propertyImages');
+        (p.imageUrls || []).forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          gallery.appendChild(img);
+        });
+
+        if (p.coordinates?.lat && p.coordinates?.lng) {
+          initMap(p.coordinates.lat, p.coordinates.lng);
+        } else {
+          document.getElementById('map').innerText = 'No location available for this property.';
+        }
+      } catch (err) {
+        console.error('Error loading property:', err);
+        alert('Failed to load property.');
+      }
+    }
+
+    function initMap(lat, lng) {
+      const mapDiv = document.getElementById('map');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.google.com/maps?q=${lat},${lng}&hl=es;z=14&output=embed`;
+      iframe.width = '100%';
+      iframe.height = '100%';
+      iframe.style.border = '0';
+      mapDiv.innerHTML = '';
+      mapDiv.appendChild(iframe);
+    }
+
+    loadProperty();
+  </script>
+</body>
+</html>

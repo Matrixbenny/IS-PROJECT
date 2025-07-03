@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const searchHistorySchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     filters: {
         location: String,
         type: String,

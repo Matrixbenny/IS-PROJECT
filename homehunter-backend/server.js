@@ -1,202 +1,214 @@
-// Load environment variables from .env file
 require('dotenv').config();
-
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // Added for JWT
+const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const fetch = require('node-fetch'); // For calling Flask AI API
+
+// --- Import Models ---
+const User = require('./models/User');
+const Property = require('./models/Property');
+const Favorite = require('./models/Favorite');
+const SearchHistory = require('./models/SearchHistory');
+const UserPreferences = require('./models/UserPreferences');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey';
 
-// --- Configuration ---
-const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/homehunter';
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey'; // Added for JWT secret
+// --- Connect to MongoDB ---
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB error:", err));
 
 // --- Middleware ---
-// Enable CORS for all origins (adjust for production for better security)
-// For development, '*' is fine. For production, specify your frontend's domain.
 app.use(cors());
-
-// Parse JSON request bodies
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-// --- MongoDB Connection ---
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log('MongoDB connected successfully!'))
-    .catch(err => {
-        console.error('MongoDB connection error:', err);
-        // Exit process with failure
-        process.exit(1);
-    });
+// --- JWT Auth Middleware ---
+const auth = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'No token provided' });
 
-// --- Mongoose Schema and Model for User ---
-const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Name is required.'],
-        trim: true
-    },
-    email: {
-        type: String,
-        required: [true, 'Email is required.'],
-        unique: true,
-        lowercase: true,
-        trim: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address.']
-    },
-    phone: {
-        type: String,
-        required: [true, 'Phone number is required.'],
-        trim: true
-    },
-    password: {
-        type: String,
-        required: [true, 'Password is required.'],
-        minlength: [8, 'Password must be at least 8 characters long.'],
-        select: false // Do not return password in queries by default
-    },
-    role: {
-        type: String,
-        required: [true, 'Role is required.'],
-        enum: ['tenant', 'agent'], // Restrict roles to predefined values
-        default: 'tenant'
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded.user;
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid token' });
     }
-}, {
-    timestamps: true // Automatically adds createdAt and updatedAt timestamps
-});
+};
 
-// Pre-save hook to hash password before saving user
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-        return next();
-    }
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-});
+// ==========================
+// ✅ ROUTES START HERE
+// ==========================
 
-const User = mongoose.model('User', userSchema);
-
-// --- Routes ---
-
-// @route   POST /api/register
-// @desc    Register a new user
-// @access  Public
+// --- Register ---
 app.post('/api/register', async (req, res) => {
     const { name, email, phone, password, role } = req.body;
-
     try {
-        // Check if user with email already exists
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ message: 'User with this email already exists.' });
-        }
+        const existing = await User.findOne({ email });
+        if (existing) return res.status(400).json({ message: 'Email already in use' });
 
-        user = new User({
-            name,
-            email,
-            phone,
-            password, // Password will be hashed by the pre-save hook
-            role
-        });
-
-        // Save user to database
+        const user = new User({ name, email, phone, password, role });
         await user.save();
 
-        // Respond with success message (do not send password back)
-        res.status(201).json({
-            message: 'Registration successful!',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        });
-
+        res.status(201).json({ message: 'Registration successful', user: { id: user._id, name, email, role } });
     } catch (err) {
-        // Handle Mongoose validation errors
-        if (err.name === 'ValidationError') {
-            const messages = Object.values(err.errors).map(val => val.message);
-            return res.status(400).json({ message: messages.join(', ') });
-        }
-        console.error('Server error during registration:', err.message);
-        res.status(500).json({ message: 'Server error. Please try again later.' });
+        res.status(500).json({ message: 'Registration error', error: err.message });
     }
 });
 
-// @route   POST /api/login
-// @desc    Authenticate user & get token
-// @access  Public
+// --- Login ---
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-
     try {
-        // Check if user exists (and retrieve password as select: false is overridden)
         const user = await User.findOne({ email }).select('+password');
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid Credentials.' });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Compare provided password with hashed password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid Credentials.' });
-        }
-
-        // Generate JWT
-        const payload = {
-            user: {
-                id: user.id, // MongoDB's _id is converted to id
-                role: user.role
-            }
-        };
-
-        jwt.sign(
-            payload,
-            JWT_SECRET,
-            { expiresIn: '1h' }, // Token expires in 1 hour
-            (err, token) => {
-                if (err) throw err;
-                res.json({
-                    token,
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        role: user.role
-                    }
-                });
-            }
-        );
-
+        const token = jwt.sign({ user: { id: user._id, role: user.role } }, JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {
-        console.error('Server error during login:', err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ message: 'Login error', error: err.message });
     }
 });
 
-
-// @route   GET /api/users (for testing purposes, not for production)
-// @desc    Get all users
-// @access  Public
-app.get('/api/users', async (req, res) => {
+// --- Add a Property ---
+app.post('/api/properties', auth, async (req, res) => {
     try {
-        const users = await User.find().select('-password'); // Exclude passwords
-        res.json(users);
+        const property = new Property(req.body);
+        await property.save();
+        res.status(201).json(property);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(400).json({ message: 'Property creation error', error: err.message });
     }
 });
 
+// --- Get All or Filtered Properties ---
+app.get('/api/properties', async (req, res) => {
+    const filters = req.query;
+    const query = {};
 
-// --- Server Start ---
-app.listen(PORT, () => {
-    console.log(`Backend server running on port ${PORT}`);
-    console.log(`Open http://localhost:${PORT}`);
+    if (filters.location) query.location = { $regex: filters.location, $options: 'i' };
+    if (filters.type) query.type = filters.type;
+    if (filters.minPrice || filters.maxPrice) {
+        query.price = {};
+        if (filters.minPrice) query.price.$gte = Number(filters.minPrice);
+        if (filters.maxPrice) query.price.$lte = Number(filters.maxPrice);
+    }
+
+    try {
+        const properties = await Property.find(query);
+        res.json(properties);
+    } catch (err) {
+        res.status(500).json({ message: 'Property fetch error', error: err.message });
+    }
 });
+
+// --- Get Property Details ---
+app.get('/api/properties/:id', async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+        if (!property) return res.status(404).json({ message: 'Property not found' });
+        res.json(property);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching property', error: err.message });
+    }
+});
+
+// --- Favorites ---
+app.post('/api/users/:id/favorites', auth, async (req, res) => {
+    try {
+        const fav = new Favorite({ userId: req.params.id, propertyId: req.body.propertyId });
+        await fav.save();
+        res.status(201).json(fav);
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding favorite', error: err.message });
+    }
+});
+
+app.get('/api/users/:id/favorites', auth, async (req, res) => {
+    try {
+        const favorites = await Favorite.find({ userId: req.params.id });
+        res.json(favorites);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching favorites', error: err.message });
+    }
+});
+
+app.delete('/api/users/:id/favorites/:propertyId', auth, async (req, res) => {
+    try {
+        await Favorite.deleteOne({ userId: req.params.id, propertyId: req.params.propertyId });
+        res.json({ message: 'Favorite removed' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting favorite', error: err.message });
+    }
+});
+
+// --- Search History ---
+app.post('/api/users/:id/search-history', auth, async (req, res) => {
+    try {
+        const record = new SearchHistory({ userId: req.params.id, filters: req.body });
+        await record.save();
+        const history = await SearchHistory.find({ userId: req.params.id });
+        res.json({ message: 'Search saved', searchHistory: history });
+    } catch (err) {
+        res.status(500).json({ message: 'Error saving history', error: err.message });
+    }
+});
+
+app.get('/api/users/:id/search-history', auth, async (req, res) => {
+    try {
+        const history = await SearchHistory.find({ userId: req.params.id });
+        res.json(history);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching history', error: err.message });
+    }
+});
+
+// --- Preferences ---
+app.put('/api/users/:id/preferences', auth, async (req, res) => {
+    try {
+        const updated = await UserPreferences.findOneAndUpdate(
+            { userId: req.params.id },
+            { preferences: req.body },
+            { upsert: true, new: true }
+        );
+        res.json({ message: 'Preferences saved', preferences: updated.preferences });
+    } catch (err) {
+        res.status(500).json({ message: 'Error saving preferences', error: err.message });
+    }
+});
+
+app.get('/api/users/:id/preferences', auth, async (req, res) => {
+    try {
+        const prefs = await UserPreferences.findOne({ userId: req.params.id });
+        res.json(prefs?.preferences || {});
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching preferences', error: err.message });
+    }
+});
+
+// --- AI Recommendations (calls Flask) ---
+app.post('/api/recommendations', auth, async (req, res) => {
+    try {
+        const flaskResponse = await fetch('http://localhost:5001/recommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body)
+        });
+        const data = await flaskResponse.json();
+        res.json({ recommendations: data });
+    } catch (err) {
+        res.status(500).json({ message: 'AI recommendation error', error: err.message });
+    }
+});
+
+// --- Start Server ---
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
