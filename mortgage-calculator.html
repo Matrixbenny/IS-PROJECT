@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator - HomeHunter Kenya</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific styles for mortgage-calculator.html */
+        .calculator-section {
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .calculator-section h1 {
+            color: #667eea;
+            margin-bottom: 25px;
+        }
+
+        .calculator-form .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .calculator-form label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .calculator-form input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .calculator-form input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            outline: none;
+        }
+
+        .result-box {
+            background-color: #f0f2f5;
+            border: 1px solid #d0d2d5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .result-box p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .result-box p strong {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                HomeHunter Kenya
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="map-view.html">Map View</a></li>
+                <li><a href="sell-property.html">Sell Your Property</a></li>
+                <li><a href="mortgage-calculator.html">Mortgage Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+            <div class="user-menu hidden" id="userMenu">
+                <div class="user-avatar" id="userAvatarDisplay"></div>
+                <span class="user-name" id="userNameDisplay"></span>
+                <button class="btn btn-primary btn-small" onclick="showDashboard()">
+                    <i class="fas fa-user"></i> Dashboard
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="calculator-section">
+            <div class="container">
+                <h1>Mortgage Payment Calculator</h1>
+                <p>Estimate your monthly mortgage payments with ease.</p>
+
+                <form id="mortgageCalculatorForm" class="calculator-form">
+                    <div class="form-group">
+                        <label for="loanAmount"><i class="fas fa-money-bill-wave"></i> Loan Amount (KSh)</label>
+                        <input type="number" id="loanAmount" placeholder="e.g., 5000000" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interestRate"><i class="fas fa-percent"></i> Annual Interest Rate (%)</label>
+                        <input type="number" id="interestRate" placeholder="e.g., 7.5" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loanTerm"><i class="fas fa-calendar-alt"></i> Loan Term (Years)</label>
+                        <input type="number" id="loanTerm" placeholder="e.g., 20" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-calculator"></i> Calculate Payment</button>
+                </form>
+
+                <div class="result-box" id="calculationResult" style="display:none;">
+                    <h2>Your Estimated Monthly Payment:</h2>
+                    <p>Monthly Payment: <strong>KSh <span id="monthlyPayment">0.00</span></strong></p>
+                    <p>Total Payment: <strong>KSh <span id="totalPayment">0.00</span></strong></p>
+                    <p>Total Interest: <strong>KSh <span id="totalInterest">0.00</span></strong></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 HomeHunter Kenya. All rights reserved. | Developed by Mwangi Benvictor & Karimi Whitney</p>
+            <p>Strathmore University - Information Systems Project</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.getElementById('mortgageCalculatorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12; // Monthly interest rate
+            const loanTermMonths = parseFloat(document.getElementById('loanTerm').value) * 12; // Total number of payments
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(loanTermMonths) || loanAmount <= 0 || interestRate <= 0 || loanTermMonths <= 0) {
+                alert('Please enter valid positive numbers for all fields.');
+                return;
+            }
+
+            let monthlyPayment;
+            if (interestRate === 0) { // Handle zero interest rate case
+                monthlyPayment = loanAmount / loanTermMonths;
+            } else {
+                monthlyPayment = loanAmount * (interestRate * Math.pow(1 + interestRate, loanTermMonths)) / (Math.pow(1 + interestRate, loanTermMonths) - 1);
+            }
+
+            const totalPayment = monthlyPayment * loanTermMonths;
+            const totalInterest = totalPayment - loanAmount;
+
+            document.getElementById('monthlyPayment').textContent = monthlyPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('totalPayment').textContent = totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('totalInterest').textContent = totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            document.getElementById('calculationResult').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
