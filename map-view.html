@@ -5,553 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map View - HomeHunter Kenya</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <style>
-        /*
-        The styles from your provided HTML will be placed here or linked externally.
-        Add map-specific styles.
-        */
-         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #667eea;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 2rem 0;
-        }
-
-        .hero {
-            text-align: center;
-            color: white;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        /* Search Section */
-        .search-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 0.8rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .search-btn {
-            grid-column: 1 / -1;
-            padding: 1rem;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Properties Grid */
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .property-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .property-image {
-            height: 200px;
-            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #ccc;
-            position: relative;
-            overflow: hidden;
-        }
-        .property-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .property-info {
-            padding: 1.5rem;
-        }
-
-        .property-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .property-location {
-            color: #666;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .property-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 1rem;
-        }
-
-        .property-features {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .property-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            border-radius: 15px;
-        }
-
-        /* Map Section */
-        .map-container {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .map-placeholder {
-            height: 400px;
-            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: #666;
-        }
-
-        /* AI Recommendations */
-        .ai-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .ai-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .ai-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #667eea;
-        }
-
-        .form-container {
-            margin-top: 1rem;
-        }
-
-        .form-container input {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 1rem;
-        }
-
-        /* Footer */
-        footer {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .search-form {
-                grid-template-columns: 1fr;
-            }
-
-            .properties-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .property-actions {
-                flex-direction: column;
-            }
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-2 {
-            margin-top: 1rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 1rem;
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        /* User Dashboard Styles */
-        .dashboard {
-            display: none;
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #f0f2f5;
-            padding-bottom: 1rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .dashboard-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .tab-btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            background: #f0f2f5;
-            color: #666;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .favorites-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .favorite-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .remove-favorite {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* Specific styles for map-view.html */
-        #map {
-            height: 600px; /* Make sure the map container has a height */
-            width: 100%;
-            border-radius: 15px;
-            overflow: hidden; /* Ensures the border-radius is applied to the iframe */
-            background: #f0f2f5; /* Placeholder background */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 1.2rem;
-            flex-direction: column;
-            gap: 1rem;
-        }
-    </style>
-    </head>
+    <link rel="stylesheet" href="css/style.css">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</head>
 <body>
     <header>
         <nav class="container">
@@ -562,78 +18,35 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="properties.html">Properties</a></li>
-                <li><a href="map-view.html" class="active">Map View</a></li>
+                <li><a href="map-view.html">Map View</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="auth-buttons" id="authButtons">
-                <a href="#" class="btn btn-secondary" onclick="openModal('loginModal')">Login</a>
-                <a href="#" class="btn btn-primary" onclick="openModal('registerModal')">Register</a>
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
             </div>
             <div class="user-menu hidden" id="userMenu">
-                <button class="btn btn-primary" onclick="showDashboard()">
+                <div class="user-avatar" id="userAvatarDisplay"></div> <span class="user-name" id="userNameDisplay"></span> <button class="btn btn-primary" onclick="showDashboard()">
                     <i class="fas fa-user"></i> Dashboard
                 </button>
                 <button class="btn btn-secondary" onclick="logout()">Logout</button>
             </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
         </nav>
     </header>
 
-    <main class="container main-content">
-        <section class="map-container fade-in">
-            <h1 class="text-center mb-2">Explore Properties on the Map</h1>
-            <p class="text-center mb-3">See the exact locations of our available properties and explore neighborhoods.</p>
-            <div id="map">
-                <i class="fas fa-map-marked-alt" style="font-size: 4rem; margin-bottom: 1rem; color: #aaa;"></i>
-                <h3>Interactive Map Loading...</h3>
-                <p>Ensure you have a valid Google Maps API key and JavaScript enabled to see the map.</p>
-                <p>Alternatively, you can embed a static map image or an iframe for basic view.</p>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.088686159623!2d36.77663245!3d-1.29656215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f117a228f237b%3A0x6b7b2b0c1b0c0b0c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-             <p class="text-center mt-3" style="color: #eee;">
-                *(Note: For a fully interactive map with property markers, a Google Maps API key and JavaScript integration are required.)*
-            </p>
+    <main class="static-page-content">
+        <section class="container map-section">
+            <h1 class="text-center mb-2">Interactive Property Map</h1>
+            <p class="text-center">Explore properties on the map and discover surrounding amenities.</p>
+            <div id="map" style="height: 500px; width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                </div>
+            <p class="text-center mt-3 text-muted">Zoom in to see property clusters and click on markers for details.</p>
         </section>
     </main>
-
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <h2>Login to Your Account</h2>
-            <form class="form-container" onsubmit="login(event)">
-                <input type="email" id="loginEmail" placeholder="Email Address" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
-            </form>
-            <p class="text-center mt-2">
-                Don't have an account?
-                <a href="#" onclick="closeModal('loginModal'); openModal('registerModal')">Register here</a>
-            </p>
-        </div>
-    </div>
-
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2>Create Your Account</h2>
-            <form class="form-container" onsubmit="register(event)">
-                <input type="text" id="registerName" placeholder="Full Name" required>
-                <input type="email" id="registerEmail" placeholder="Email Address" required>
-                <input type="tel" id="registerPhone" placeholder="Phone Number" required>
-                <input type="password" id="registerPassword" placeholder="Password" required>
-                <select id="registerRole" required>
-                    <option value="">Select User Type</option>
-                    <option value="tenant">Tenant</option>
-                    <option value="agent">Real Estate Agent</option>
-                </select>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
-            </form>
-            <p class="text-center mt-2">
-                Already have an account?
-                <a href="#" onclick="closeModal('registerModal'); openModal('loginModal')">Login here</a>
-            </p>
-        </div>
-    </div>
 
     <footer>
         <div class="container">
@@ -642,116 +55,53 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
     <script>
-        // Global data and utility functions (copied from your reference and slightly modified for page context)
-        let currentUser = null;
-
-        // The 'sampleProperties' array is needed to get coordinates if you want to use them for map markers.
-        // For a simple iframe, it's not strictly necessary for this page, but good to keep consistent.
-        const sampleProperties = [
-            { id: 1, title: "Modern 2-Bedroom Apartment", location: "Westlands, Nairobi", coordinates: { lat: -1.2676, lng: 36.8108 } },
-            { id: 2, title: "Spacious Family House", location: "Karen, Nairobi", coordinates: { lat: -1.3197, lng: 36.6859 } },
-            { id: 3, title: "Cozy Studio Apartment", location: "Kilimani, Nairobi", coordinates: { lat: -1.2921, lng: 36.7856 } },
-            { id: 4, title: "Luxury Penthouse", location: "Upper Hill, Nairobi", coordinates: { lat: -1.2921, lng: 36.8219 } },
-            { id: 5, title: "Affordable Bedsitter", location: "Kasarani, Nairobi", coordinates: { lat: -1.2297, lng: 36.8926 } },
-            { id: 6, title: "Executive Mansion", location: "Runda, Nairobi", coordinates: { lat: -1.2098, lng: 36.7640 } },
-            { id: 7, title: "Townhouse near CBD", location: "Kileleshwa, Nairobi", coordinates: { lat: -1.2829, lng: 36.7828 } },
-            { id: 8, title: "Commercial Office Space", location: "Upper Hill, Nairobi", coordinates: { lat: -1.2980, lng: 36.8160 } }
-        ];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus(); // From the original script
-            // initMap(); // Call initMap on page load if using Google Maps API
-        });
-
-        // Function to initialize the Google Map (requires Google Maps API script and key)
+        // This function will be called by the Google Maps API script after it loads
         function initMap() {
-            // Replace with your actual Google Map initialization logic
-            const mapOptions = {
-                center: { lat: -1.286389, lng: 36.817223 }, // Center of Nairobi
-                zoom: 12
-            };
-            // const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            // Default location: Nairobi, Kenya
+            const nairobi = { lat: -1.286389, lng: 36.817223 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: nairobi,
+            });
 
-            // Add markers for each property
-            // sampleProperties.forEach(property => {
-            //     if (property.coordinates) {
-            //         new google.maps.Marker({
-            //             position: property.coordinates,
-            //             map: map,
-            //             title: property.title
-            //         });
-            //     }
-            // });
+            // Example: Add markers for properties (using sample data from script.js)
+            // This will require global access to sampleProperties or fetching them.
+            // For a robust implementation, you would fetch property coordinates from your backend.
 
-            console.log("Map initialization placeholder: Map should be loaded here with Google Maps API.");
-            // For now, if the Google Maps API isn't loaded, replace the placeholder
-            // This is just to ensure something shows if the API fails or isn't configured
-            const mapDiv = document.getElementById('map');
-            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-                 mapDiv.innerHTML = `
-                    <i class="fas fa-map-marked-alt" style="font-size: 4rem; margin-bottom: 1rem; color: #aaa;"></i>
-                    <h3>Interactive Map Loading...</h3>
-                    <p>Map API failed to load or is not configured. Displaying a static placeholder.</p>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.088686159623!2d36.77663245!3d-1.29656215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f117a228f237b%3A0x6b7b2b0c1b0c0b0c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                `;
-            }
-        }
+            // To access sampleProperties, make sure script.js is loaded and potentially expose it
+            // or pass it to initMap if script.js defines it within its scope.
+            // For simplicity, let's assume `sampleProperties` is globally available or you fetch it here.
+            
+            // Example of adding a marker:
+            /*
+            const exampleProperty = { lat: -1.2676, lng: 36.8108, title: "Modern 2-Bedroom Apartment" };
+            new google.maps.Marker({
+                position: { lat: exampleProperty.lat, lng: exampleProperty.lng },
+                map: map,
+                title: exampleProperty.title,
+            });
+            */
 
-
-        // Reused Modal/Auth functions from your original index.html script
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function login(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            currentUser = { id: 1, name: email.split('@')[0], email: email, role: 'tenant', avatar: email.charAt(0).toUpperCase() };
-            updateAuthUI();
-            closeModal('loginModal');
-            showNotification('Login successful! Welcome back.', 'success');
-        }
-
-        function register(event) {
-            event.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            currentUser = { id: Date.now(), name: name, email: email, role: document.getElementById('registerRole').value, avatar: name.charAt(0).toUpperCase() };
-            updateAuthUI();
-            closeModal('registerModal');
-            showNotification('Registration successful! Welcome to HomeHunter Kenya.', 'success');
-        }
-
-        function logout() {
-            currentUser = null;
-            updateAuthUI();
-            showNotification('Logged out successfully.', 'info');
-        }
-
-        function updateAuthUI() {
-            const authButtons = document.getElementById('authButtons');
-            const userMenu = document.getElementById('userMenu');
-
-            if (currentUser) {
-                authButtons.classList.add('hidden');
-                userMenu.classList.remove('hidden');
+            // You would loop through your `allProperties` (from script.js) here to add markers
+            // Example:
+            if (typeof allProperties !== 'undefined' && allProperties.length > 0) {
+                allProperties.forEach(property => {
+                    if (property.coordinates && property.coordinates.lat && property.coordinates.lng) {
+                        new google.maps.Marker({
+                            position: { lat: property.coordinates.lat, lng: property.coordinates.lng },
+                            map: map,
+                            title: property.title,
+                            // You can add more info to the marker or an info window
+                        });
+                    }
+                });
             } else {
-                authButtons.classList.remove('hidden');
-                userMenu.classList.add('hidden');
+                console.warn('No properties available for map view or script.js not fully loaded.');
+                // Fallback: show some default markers or a message
             }
-        }
-
-        function checkLoginStatus() {
-            updateAuthUI();
-        }
-
-        function showNotification(message, type = 'info') {
-            alert(`${type.toUpperCase()}: ${message}`);
         }
     </script>
 </body>
