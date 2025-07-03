@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Properties - HomeHunter Kenya</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <style>
-        /*
-        The styles from your provided HTML will be placed here or linked externally.
-        For demonstration, I'm assuming you'll either copy the <style> block from your reference
-        or link to an external CSS file named `style.css` that contains all the styles.
-        */
+    <style>
+        /* All the CSS you provided previously goes here. */
+        /* I am including it directly in the HTML for completeness as you provided it this way last time. */
         * {
             margin: 0;
             padding: 0;
@@ -374,7 +371,8 @@
             margin-top: 1rem;
         }
 
-        .form-container input {
+        .form-container input,
+        .form-container select { /* Added select here */
             width: 100%;
             padding: 0.8rem;
             margin-bottom: 1rem;
@@ -650,7 +648,7 @@
                         <option value="4">4+</option>
                     </select>
                 </div>
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="sortOrder">Sort By</label>
                     <select id="sortOrder">
                         <option value="price-asc">Price: Low to High</option>
@@ -932,7 +930,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of page
         }
 
-
         function searchProperties(event) {
             event.preventDefault();
             const location = document.getElementById('location').value.toLowerCase();
@@ -1001,7 +998,6 @@
             // In a real app, save favoriteProperties to localStorage or backend
         }
 
-
         // Reused Modal/Auth/Dashboard functions from your original index.html script
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -1011,12 +1007,13 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
+        // Keep login client-side for this example's scope, but it would also use fetch for a real backend
         function login(event) {
             event.preventDefault();
             const email = document.getElementById('loginEmail').value;
             // Simulate login process (simplified)
             currentUser = {
-                id: 1,
+                id: 1, // This ID won't match a backend ID, it's just for local simulation
                 name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
                 email: email,
                 role: 'tenant',
@@ -1027,28 +1024,67 @@
             showNotification('Login successful! Welcome back.', 'success');
         }
 
-        function register(event) {
+        // --- MODIFIED REGISTER FUNCTION TO INTERACT WITH YOUR BACKEND ---
+        async function register(event) {
             event.preventDefault();
             const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
-            // Simulate registration process (simplified)
-            currentUser = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                role: document.getElementById('registerRole').value,
-                avatar: name.charAt(0).toUpperCase()
-            };
-            updateAuthUI();
-            closeModal('registerModal');
-            showNotification('Registration successful! Welcome to HomeHunter Kenya.', 'success');
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+
+            // Data to send to your backend
+            const userData = { name, email, phone, password, role };
+
+            try {
+                // *** This is the crucial change: Point to your backend's registration endpoint ***
+                const response = await fetch('http://localhost:5000/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const result = await response.json(); // Parse the JSON response from the backend
+
+                if (response.ok) { // Check if the response status is 2xx (success)
+                    // Backend successfully registered the user.
+                    // Now, update frontend state to reflect logged-in user,
+                    // using data potentially returned by the backend (like user.id, user.name).
+                    currentUser = {
+                        id: result.user.id, // Use the ID provided by your backend
+                        name: result.user.name,
+                        email: result.user.email,
+                        role: result.user.role,
+                        avatar: result.user.name.charAt(0).toUpperCase()
+                    };
+                    updateAuthUI(); // Update header to show logged-in user
+                    closeModal('registerModal'); // Close registration modal
+                    showNotification(result.message || 'Registration successful! Welcome to HomeHunter Kenya.', 'success');
+
+                    // In a real application, if your backend returns an authentication token (JWT),
+                    // you would store it here:
+                    // localStorage.setItem('authToken', result.token);
+                } else {
+                    // Handle errors from the backend (e.g., email already exists, validation errors)
+                    // The backend should send a helpful `message` in its JSON response.
+                    showNotification(result.message || 'Registration failed. Please check your inputs.', 'error');
+                }
+            } catch (error) {
+                // Handle network errors (e.g., backend server not running, connection refused)
+                console.error('Error during registration (frontend network/parsing error):', error);
+                showNotification('Network error or server unavailable. Please try again later.', 'error');
+            }
         }
 
         function logout() {
             currentUser = null;
             favoriteProperties = []; // Clear favorites on logout
             updateAuthUI();
-            hideDashboard();
+            // In a real app, you would also clear any stored tokens (e.g., from localStorage)
+            // localStorage.removeItem('authToken');
+            hideDashboard(); // Assuming this function exists on your dashboard page
             showNotification('Logged out successfully.', 'info');
             // Re-render properties to remove favorite states
             displayProperties(filteredProperties);
@@ -1061,9 +1097,9 @@
             if (currentUser) {
                 authButtons.classList.add('hidden');
                 userMenu.classList.remove('hidden');
-                // document.getElementById('userName').textContent = currentUser.name; // These are only on dashboard page
-                // document.getElementById('userEmail').textContent = currentUser.email; // These are only on dashboard page
-                // document.getElementById('userAvatar').textContent = currentUser.avatar; // These are only on dashboard page
+                // The dashboard specific elements (userName, userEmail, userAvatar)
+                // are not on this 'properties.html' page, so commenting them out here.
+                // They would be relevant for your dashboard.html
             } else {
                 authButtons.classList.remove('hidden');
                 userMenu.classList.add('hidden');
@@ -1071,13 +1107,43 @@
         }
 
         function checkLoginStatus() {
-            // This function would typically check a session or token in localStorage
+            // This function would typically check for a token in localStorage
+            // or make an API call to verify the session.
             // For this static HTML, it simply ensures the UI is correct if `currentUser` is somehow set.
-            updateAuthUI();
+            // In a real app:
+            // const token = localStorage.getItem('authToken');
+            // if (token) {
+            //     // Make an API call to your backend to validate the token and get user info
+            //     // fetch('http://localhost:5000/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` }})
+            //     //   .then(res => res.json())
+            //     //   .then(userFromServer => { currentUser = userFromServer; updateAuthUI(); })
+            //     //   .catch(err => { console.error('Token validation failed', err); localStorage.removeItem('authToken'); });
+            // }
+            updateAuthUI(); // Keep this to correctly display auth buttons based on initial currentUser state
         }
 
+        // This function would be on dashboard.html if you want to show/hide it from properties.html
+        function showDashboard() {
+            // For now, redirecting, as dashboard content is likely on another page.
+            // In a single-page app, you'd show/hide a div.
+            if (currentUser) {
+                alert(`Redirecting to Dashboard for ${currentUser.name}.`);
+                // window.location.href = 'dashboard.html'; // Example redirect
+            } else {
+                showNotification('Please log in to view your dashboard.', 'warning');
+            }
+        }
+
+        // Placeholder for hideDashboard if it's meant to hide elements on this page
+        function hideDashboard() {
+            // If there was a dashboard section on this page, you'd hide it here.
+            // document.getElementById('userDashboardSection').classList.add('hidden');
+        }
+
+        // Simple notification system
         function showNotification(message, type = 'info') {
-            // A simple notification system (can be expanded)
+            // You can implement a more sophisticated notification system (e.g., a div that appears and fades)
+            // For now, using alert, but consider libraries like Toastify.js or a custom CSS/JS solution.
             alert(`${type.toUpperCase()}: ${message}`);
         }
     </script>
