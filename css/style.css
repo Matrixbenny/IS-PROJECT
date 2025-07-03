@@ -1,3 +1,6 @@
+/* css/style.css */
+
+/* --- Base Styles --- */
 * {
     margin: 0;
     padding: 0;
@@ -8,8 +11,10 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Main background gradient */
     min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Ensure footer stays at bottom */
 }
 
 .container {
@@ -18,7 +23,7 @@ body {
     padding: 0 20px;
 }
 
-/* Header */
+/* --- Header --- */
 header {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -48,194 +53,313 @@ nav {
     display: flex;
     list-style: none;
     gap: 2rem;
-    align-items: center;
 }
 
 .nav-links a {
+    color: #555;
     text-decoration: none;
-    color: #333;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
     color: #667eea;
 }
 
-.auth-buttons {
-    display: flex;
-    gap: 1rem;
+/* --- Auth Buttons & User Menu in Header --- */
+.auth-buttons .btn {
+    margin-left: 10px;
 }
 
-.btn {
-    padding: 0.7rem 1.5rem;
-    border: none;
-    border-radius: 25px;
+.auth-buttons.hidden {
+    display: none;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-menu.hidden {
+    display: none;
+}
+
+.user-avatar {
+    width: 40px; /* Smaller for header */
+    height: 40px; /* Smaller for header */
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem; /* Smaller font for initials */
+    font-weight: bold;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.user-name {
+    font-weight: 600;
+    color: #333;
+    max-width: 120px; /* Limit width */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+
+/* --- Mobile Menu Toggle --- */
+.menu-toggle {
+    display: none; /* Hidden by default */
+    font-size: 1.5rem;
     cursor: pointer;
+    color: #667eea;
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s;
-    text-align: center;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-primary {
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
 .btn-primary:hover {
+    opacity: 0.9;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
 }
 
 .btn-secondary {
-    background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
+    background: #e0e0e0;
+    color: #555;
+    border: 1px solid #ccc;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #d0d0d0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-hero {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    background: #ff5722; /* Accent color for search */
     color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
 }
 
-/* Main Content */
-.main-content {
-    padding: 2rem 0;
+.btn-hero:hover {
+    background: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 87, 34, 0.4);
 }
 
-.hero {
+.btn-small {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+/* --- Main Content Layout --- */
+main {
+    flex-grow: 1; /* Allow main content to grow and push footer down */
+    padding: 20px 0;
+}
+
+section {
+    padding: 40px 0;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+section:last-of-type {
+    margin-bottom: 0;
+}
+
+h1, h2, h3, h4 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.text-center {
     text-align: center;
+}
+
+.mb-2 { margin-bottom: 1.5rem; }
+.mt-2 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2.5rem; }
+
+
+/* --- Hero Section (Homepage) --- */
+.hero-section {
+    background: url('../images/hero-bg.jpg') no-repeat center center/cover; /* Ensure you have this image */
     color: white;
-    margin-bottom: 3rem;
+    padding: 100px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    border-radius: 0; /* Remove border-radius here as it's full width */
+    box-shadow: none; /* Remove shadow here */
 }
 
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: white;
 }
 
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
+.hero-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
 }
 
-/* Search Section */
-.search-section {
-    background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    margin-bottom: 3rem;
-}
-
-.search-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
+.search-bar-hero {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    margin-top: 30px;
 }
 
-.form-group label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #555;
-}
-
-.form-group input, .form-group select {
-    padding: 0.8rem;
+.search-bar-hero input,
+.search-bar-hero select {
+    padding: 12px 18px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    flex: 1;
+    min-width: 180px;
+    max-width: 250px;
 }
 
-.form-group input:focus, .form-group select:focus {
-    border-color: #667eea;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+.search-bar-hero button {
+    flex: none; /* Do not grow */
 }
 
-.btn-search {
-    grid-column: 1 / -1; /* Span all columns */
-    padding: 1rem;
-    font-size: 1.1rem;
+/* --- Quick Links Section (Homepage) --- */
+.quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px 20px; /* Add padding to quick-links section */
+    background: rgba(255, 255, 255, 0.9); /* Match other sections */
+    border-radius: 15px; /* Match other sections */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Match other sections */
 }
 
-/* Property Cards */
-.properties-section {
-    padding: 2rem 0;
+.quick-link-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.quick-link-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.quick-link-card i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.quick-link-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.quick-link-card p {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* --- Properties Grid (General) --- */
 .properties-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 20px 0;
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
 }
 
 .property-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden; /* Ensures image corners are rounded with card */
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Ensure cards are same height in a row */
 }
 
 .property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
 }
 
 .property-image {
     width: 100%;
-    height: 200px; /* Fixed height for consistent image display */
-    overflow: hidden; /* Hide overflowing parts of the image */
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.property-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the area without distortion */
-    transition: transform 0.3s ease;
-}
-
-.property-card:hover .property-image img {
-    transform: scale(1.05); /* Slight zoom effect on hover */
+    height: 200px;
+    background-color: #f0f2f5; /* Placeholder background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #ccc;
+    object-fit: cover;
 }
 
 .property-info {
-    padding: 15px 20px;
-    flex-grow: 1; /* Allows info section to expand and push footer down */
+    padding: 20px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes features/actions to bottom */
 }
 
 .property-title {
-    font-size: 1.3rem;
-    font-weight: 700; /* Made bolder */
-    color: #333; /* Kept existing color, but ensure contrast */
+    font-size: 1.5rem;
     margin-bottom: 8px;
+    color: #333;
 }
 
 .property-location {
-    font-size: 0.95rem;
-    color: #666;
+    font-size: 1rem;
+    color: #777;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -243,340 +367,103 @@ nav {
 }
 
 .property-price {
-    font-size: 1.2rem;
-    font-weight: 700; /* Made bolder */
+    font-size: 1.6rem;
+    font-weight: bold;
     color: #667eea;
     margin-bottom: 15px;
 }
 
 .property-features {
     display: flex;
-    flex-wrap: wrap;
     gap: 15px;
-    margin-top: auto; /* Pushes features to the bottom of the info section */
-    padding-top: 15px; /* Add some space above features */
-    border-top: 1px solid #eee; /* Separator */
+    margin-bottom: 20px;
 }
 
-.feature {
+.property-features .feature {
     font-size: 0.9rem;
     color: #555;
-    font-weight: 600; /* Added font-weight */
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.feature i {
+.property-features .feature i {
     color: #764ba2;
 }
 
 .property-actions {
+    margin-top: auto; /* Push buttons to the bottom */
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.btn-small {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    color: #ccc; /* Default grey for non-favorite */
-    font-size: 1.5rem;
-    transition: color 0.3s;
-}
-
-.btn-icon:hover {
-    color: #ff6b6b; /* Red on hover */
-}
-
-.btn-icon.favorite-active {
-    color: #ff0000; /* Solid red for favorite */
-}
-
-/* Call to Action Section */
-.cta-section {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    color: white;
-    padding: 4rem 0;
-    text-align: center;
-    border-radius: 15px;
-    margin: 30px auto;
-    max-width: 1000px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.cta-section h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.cta-section p {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-}
-
-.cta-section .btn {
-    font-size: 1.1rem;
-    padding: 0.8rem 2rem;
-    background: white;
-    color: #764ba2;
-    border: 2px solid white;
-}
-
-.cta-section .btn:hover {
-    background: transparent;
-    color: white;
-    box-shadow: none;
-}
-
-/* Footer */
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 1.5rem 0;
-    margin-top: 3rem;
-    font-size: 0.9rem;
-}
-
-footer p {
-    margin-bottom: 5px;
-}
-
-/* General Utilities */
-.text-center {
-    text-align: center;
-}
-
-.mb-2 {
-    margin-bottom: 1.5rem;
-}
-
-.mt-2 {
-    margin-top: 1.5rem;
-}
-
-.d-flex-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #f0f2f5;
-    padding-bottom: 1rem;
-}
-
-.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.8s forwards;
-}
-
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* User Menu in Header */
-.user-menu {
-    display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.user-avatar {
-    width: 35px;
-    height: 35px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: bold;
+/* Specific to properties.html page */
+.properties-page main {
+    padding-top: 0; /* Adjust if header is sticky */
 }
 
-.user-name {
-    font-weight: 600;
+.search-filter-section {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+.search-filter-section h2 {
+    text-align: center;
+    margin-bottom: 25px;
     color: #333;
 }
 
-.user-menu .btn-small {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+.search-filter-section .search-bar-hero {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 0;
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* Mobile Navigation */
-.menu-toggle {
-    display: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #667eea;
-}
-
-@media (max-width: 768px) {
-    .nav-links {
-        flex-direction: column;
-        position: absolute;
-        top: 60px; /* Adjust based on header height */
-        left: 0;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        padding: 1rem 0;
-        display: none; /* Hidden by default on mobile */
-        z-index: 999;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links li {
-        margin: 0.5rem 0;
-        text-align: center;
-    }
-
-    .auth-buttons {
-        display: none; /* Hide in mobile nav by default */
-    }
-
-    .user-menu {
-        display: none; /* Hide in mobile nav by default */
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .hero-section {
-        padding: 4rem 20px;
-    }
-
-    .search-bar-hero {
-        grid-template-columns: 1fr !important; /* Stack search inputs on mobile */
-    }
-
-    .search-bar-hero button {
-        grid-column: auto !important;
-    }
-
-    .properties-grid {
-        grid-template-columns: 1fr; /* Single column on mobile */
-    }
-
-    .quick-links {
-        grid-template-columns: 1fr;
-    }
-
-    .quick-link-card {
-        padding: 20px;
-    }
-
-    .cta-section {
-        padding: 2rem 20px;
-    }
-}
-
-
-/* Specific styles for sell-property.html if needed, otherwise rely on general style.css */
-.sell-property-section {
-    padding: 40px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    margin: 30px auto;
-    max-width: 800px;
-}
-
-.sell-property-section h1 {
-    color: #667eea;
+/* Map Section */
+.map-container {
     text-align: center;
-    margin-bottom: 25px;
+    padding: 40px 20px;
 }
 
-.verification-info {
-    background-color: #e6f7ff;
-    border: 1px solid #91d5ff;
-    color: #1890ff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
-.verification-info strong {
-    color: #096dd9;
-}
-
-.document-upload-group {
-    margin-bottom: 20px;
-}
-
-.document-upload-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
-}
-
-.document-upload-group input[type="file"] {
-    display: block;
-    margin-top: 5px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    width: 100%;
-}
-
-/* Specific styles for mortgage-calculator.html */
-.calculator-section {
-    padding: 40px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    margin: 30px auto;
-    max-width: 600px;
-    text-align: center;
-}
-
-.calculator-section h1 {
-    color: #667eea;
-    margin-bottom: 25px;
-}
-
-.calculator-form .form-group {
+.map-placeholder {
+    background: #f0f2f5;
+    padding: 50px 20px;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: #666;
+}
+.map-placeholder h3 { color: #555; }
+.map-placeholder p { font-size: 1rem; color: #777; }
+
+
+/* --- General Form Styles (for contact page etc.) --- */
+.form-group {
     margin-bottom: 20px;
+    text-align: left;
 }
 
-.calculator-form label {
+.form-group label {
+    display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: #555;
 }
 
-.calculator-form input[type="number"] {
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
@@ -585,28 +472,202 @@ footer p {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.calculator-form input[type="number"]:focus {
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
     outline: none;
 }
 
-.result-box {
-    background-color: #f0f2f5;
-    border: 1px solid #d0d2d5;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 30px;
-    text-align: left;
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
 }
 
-.result-box p {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+/* --- Static Page Content (About, Contact, Map) --- */
+.static-page-content {
+    background: none; /* No gradient or shadow on main for these pages */
+    padding: 0; /* Remove padding from main */
+}
+
+.about-section,
+.contact-section,
+.map-section {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin-top: 30px; /* Adjust spacing from header */
+    margin-bottom: 30px; /* Adjust spacing to footer */
+}
+
+.about-section h1, .about-section h3,
+.contact-section h1, .contact-section h2,
+.map-section h1 {
     color: #333;
 }
 
-.result-box p strong {
+.about-section ul {
+    list-style: disc;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.about-section ul li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* Contact Page Specific Styles */
+.contact-methods {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.contact-card {
+    background: #f8f8f8;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.contact-card i {
+    font-size: 2.8rem;
     color: #667eea;
+    margin-bottom: 20px;
+}
+
+.contact-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.contact-card p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.contact-form {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #f8f8f8;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.contact-form .btn-primary {
+    width: 100%;
+}
+
+
+/* Map View Specific Styles */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background-color: #e0e0e0; /* Fallback background for map div */
+    display: flex; /* For centering initial text if map doesn't load */
+    align-items: center;
+    justify-content: center;
     font-size: 1.2rem;
+    color: #888;
+}
+
+/* --- Footer --- */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Push footer to the bottom */
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        position: absolute;
+        top: 60px; /* Adjust based on header height */
+        left: 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        padding: 20px 0;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .auth-buttons {
+        display: none; /* Hide auth buttons on small screens when menu is expanded */
+    }
+
+    .user-menu {
+        display: none !important; /* Hide user menu on small screens when menu is expanded */
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .search-bar-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar-hero input,
+    .search-bar-hero select,
+    .search-bar-hero button {
+        max-width: 100%;
+    }
+
+    .quick-link-card, .contact-card {
+        min-width: unset;
+        max-width: 100%;
+    }
+
+    .properties-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+    }
+
+    .auth-container {
+        padding: 20px;
+        margin: 20px;
+    }
 }
