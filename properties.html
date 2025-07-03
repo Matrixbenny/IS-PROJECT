@@ -5,579 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Properties - HomeHunter Kenya</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* All the CSS you provided previously goes here. */
-        /* I am including it directly in the HTML for completeness as you provided it this way last time. */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #667eea;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 2rem 0;
-        }
-
-        .hero {
-            text-align: center;
-            color: white;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        /* Search Section */
-        .search-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 0.8rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .search-btn {
-            grid-column: 1 / -1;
-            padding: 1rem;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Properties Grid */
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .property-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .property-image {
-            height: 200px;
-            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: #ccc;
-            position: relative;
-            overflow: hidden; /* Ensure image doesn't overflow */
-        }
-        .property-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Cover the area, crop if necessary */
-        }
-
-
-        .property-info {
-            padding: 1.5rem;
-        }
-
-        .property-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .property-location {
-            color: #666;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .property-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 1rem;
-        }
-
-        .property-features {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .property-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            border-radius: 15px;
-        }
-
-        /* Map Section */
-        .map-container {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .map-placeholder {
-            height: 400px;
-            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: #666;
-        }
-
-        /* AI Recommendations */
-        .ai-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .ai-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .ai-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #667eea;
-        }
-
-        .form-container {
-            margin-top: 1rem;
-        }
-
-        .form-container input,
-        .form-container select { /* Added select here */
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 1rem;
-        }
-
-        /* Footer */
-        footer {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none; /* Hide navigation links on small screens */
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .search-form {
-                grid-template-columns: 1fr;
-            }
-
-            .properties-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .property-actions {
-                flex-direction: column;
-            }
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-2 {
-            margin-top: 1rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 1rem;
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        /* User Dashboard Styles */
-        .dashboard {
-            display: none; /* Hidden by default */
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 3rem;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #f0f2f5;
-            padding-bottom: 1rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .dashboard-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .tab-btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            background: #f0f2f5;
-            color: #666;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .favorites-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .favorite-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .remove-favorite {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Specific styles for properties.html */
-        .properties-page-header {
-            text-align: center;
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .properties-page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .properties-page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        .pagination a {
-            text-decoration: none;
-            color: #667eea;
-            padding: 0.7rem 1rem;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        .pagination a:hover,
-        .pagination a.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border-color: transparent;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
@@ -588,14 +16,14 @@
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="properties.html" class="active">Properties</a></li>
+                <li><a href="properties.html">Properties</a></li>
                 <li><a href="map-view.html">Map View</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="auth-buttons" id="authButtons">
-                <a href="#" class="btn btn-secondary" onclick="openModal('loginModal')">Login</a>
-                <a href="#" class="btn btn-primary" onclick="openModal('registerModal')">Register</a>
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
             </div>
             <div class="user-menu hidden" id="userMenu">
                 <button class="btn btn-primary" onclick="showDashboard()">
@@ -607,108 +35,136 @@
     </header>
 
     <main class="container main-content">
-        <section class="properties-page-header fade-in">
-            <h1>Browse Our Properties</h1>
-            <p>Find apartments, houses, bedsitters, and mansions for sale or rent across Kenya.</p>
-        </section>
-
-        <section class="search-section fade-in">
-            <h2 class="text-center mb-2">Refine Your Search</h2>
-            <form class="search-form" onsubmit="searchProperties(event)">
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" placeholder="Enter location (e.g., Nairobi, Westlands)">
-                </div>
-                <div class="form-group">
-                    <label for="propertyType">Property Type</label>
-                    <select id="propertyType">
-                        <option value="">All Types</option>
-                        <option value="apartment">Apartment</option>
-                        <option value="house">House</option>
-                        <option value="bedsitter">Bedsitter</option>
-                        <option value="studio">Studio</option>
-                        <option value="mansion">Mansion</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="minPrice">Min Price (KSh)</label>
-                    <input type="number" id="minPrice" placeholder="0">
-                </div>
-                <div class="form-group">
-                    <label for="maxPrice">Max Price (KSh)</label>
-                    <input type="number" id="maxPrice" placeholder="500000">
-                </div>
-                <div class="form-group">
-                    <label for="bedrooms">Bedrooms</label>
-                    <select id="bedrooms">
-                        <option value="">Any</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4+</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="sortOrder">Sort By</label>
-                    <select id="sortOrder">
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                        <option value="newest">Newest First</option>
-                    </select>
-                </div>
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-filter"></i> Apply Filters
-                </button>
-            </form>
-        </section>
-
         <section class="properties-section fade-in">
-            <h2 class="text-center mb-2">Currently Available Properties</h2>
+            <h2 class="text-center mb-2">Available Properties</h2>
             <div class="properties-grid" id="propertiesGrid">
+                <div class="property-card">
+                    <div class="property-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="property-info">
+                        <h3 class="property-title">Spacious Family Home</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Karen, Nairobi</p>
+                        <p class="property-price">KSh 120,000/month</p>
+                        <div class="property-features">
+                            <span class="feature"><i class="fas fa-bed"></i> 4 Beds</span>
+                            <span class="feature"><i class="fas fa-bath"></i> 3 Baths</span>
+                            <span class="feature"><i class="fas fa-car"></i> 2 Parking</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-primary btn-small">View Details</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-heart"></i> Favorite</button>
+                        </div>
+                    </div>
                 </div>
-            <div class="pagination" id="propertyPagination">
+                <div class="property-card">
+                    <div class="property-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="property-info">
+                        <h3 class="property-title">Modern Apartment</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Kilimani, Nairobi</p>
+                        <p class="property-price">KSh 85,000/month</p>
+                        <div class="property-features">
+                            <span class="feature"><i class="fas fa-bed"></i> 2 Beds</span>
+                            <span class="feature"><i class="fas fa-bath"></i> 2 Baths</span>
+                            <span class="feature"><i class="fas fa-car"></i> 1 Parking</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-primary btn-small">View Details</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-heart"></i> Favorite</button>
+                        </div>
+                    </div>
                 </div>
+                </div>
+        </section>
+
+        <section id="propertyDetailsSection" class="hidden property-details-section fade-in">
+            <button class="btn btn-secondary mb-2" onclick="hidePropertyDetails()">
+                <i class="fas fa-arrow-left"></i> Back to Properties
+            </button>
+            <div class="property-detail-card">
+                <div class="detail-gallery">
+                    <img src="https://via.placeholder.com/600x400?text=Property+Large+Image" alt="Property Image" id="detailImage">
+                    <div class="thumbnail-gallery" id="thumbnailGallery">
+                        <img src="https://via.placeholder.com/100x70?text=Thumb1" alt="Thumbnail 1" class="active">
+                        <img src="https://via.placeholder.com/100x70?text=Thumb2" alt="Thumbnail 2">
+                        <img src="https://via.placeholder.com/100x70?text=Thumb3" alt="Thumbnail 3">
+                    </div>
+                </div>
+                <div class="detail-info">
+                    <h2 id="detailTitle"></h2>
+                    <p class="detail-location"><i class="fas fa-map-marker-alt"></i> <span id="detailLocation"></span></p>
+                    <p class="detail-price" id="detailPrice"></p>
+                    <div class="detail-features">
+                        <span class="feature"><i class="fas fa-bed"></i> <span id="detailBeds"></span> Beds</span>
+                        <span class="feature"><i class="fas fa-bath"></i> <span id="detailBaths"></span> Baths</span>
+                        <span class="feature"><i class="fas fa-car"></i> <span id="detailParking"></span> Parking</span>
+                    </div>
+                    <p class="detail-description" id="detailDescription"></p>
+                    <div class="detail-actions">
+                        <button class="btn btn-primary"><i class="fas fa-phone-alt"></i> Contact Agent</button>
+                        <button class="btn btn-secondary"><i class="fas fa-heart"></i> Add to Favorites</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="agentContactSection" class="hidden agent-contact-section fade-in">
+            <h2 class="text-center mb-2">Contact Agent</h2>
+            <div class="agent-card">
+                <div class="agent-info">
+                    <div class="agent-avatar">AG</div>
+                    <div>
+                        <h3>Agent Name</h3>
+                        <p>Real Estate Agent</p>
+                    </div>
+                </div>
+                <div class="agent-contact-details">
+                    <p><i class="fas fa-phone-alt"></i> +254 7XX XXX XXX</p>
+                    <p><i class="fas fa-envelope"></i> agent@example.com</p>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="contactName">Your Name</label>
+                        <input type="text" id="contactName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Your Email</label>
+                        <input type="email" id="contactEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Message</label>
+                        <textarea id="contactMessage" rows="5" placeholder="I'm interested in this property..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="relatedPropertiesSection" class="hidden properties-section fade-in">
+            <h2 class="text-center mb-2">Related Properties You Might Like</h2>
+            <div class="properties-grid" id="relatedPropertiesGrid">
+                <div class="property-card">
+                    <div class="property-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="property-info">
+                        <h3 class="property-title">Compact Townhouse</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Kileleshwa, Nairobi</p>
+                        <p class="property-price">KSh 70,000/month</p>
+                        <div class="property-features">
+                            <span class="feature"><i class="fas fa-bed"></i> 2 Beds</span>
+                            <span class="feature"><i class="fas fa-bath"></i> 1 Bath</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-primary btn-small">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
-
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <h2>Login to Your Account</h2>
-            <form class="form-container" onsubmit="login(event)">
-                <input type="email" id="loginEmail" placeholder="Email Address" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
-            </form>
-            <p class="text-center mt-2">
-                Don't have an account?
-                <a href="#" onclick="closeModal('loginModal'); openModal('registerModal')">Register here</a>
-            </p>
-        </div>
-    </div>
-
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2>Create Your Account</h2>
-            <form class="form-container" onsubmit="register(event)">
-                <input type="text" id="registerName" placeholder="Full Name" required>
-                <input type="email" id="registerEmail" placeholder="Email Address" required>
-                <input type="tel" id="registerPhone" placeholder="Phone Number" required>
-                <input type="password" id="registerPassword" placeholder="Password" required>
-                <select id="registerRole" required>
-                    <option value="">Select User Type</option>
-                    <option value="tenant">Tenant</option>
-                    <option value="agent">Real Estate Agent</option>
-                </select>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
-            </form>
-            <p class="text-center mt-2">
-                Already have an account?
-                <a href="#" onclick="closeModal('registerModal'); openModal('loginModal')">Login here</a>
-            </p>
-        </div>
-    </div>
 
     <footer>
         <div class="container">
@@ -717,435 +173,6 @@
         </div>
     </footer>
 
-    <script>
-        // Global data and utility functions (copied from your reference and slightly modified for page context)
-        let currentUser = null;
-        let favoriteProperties = [];
-        let allProperties = []; // This will hold all properties
-        let filteredProperties = []; // This will hold currently filtered/displayed properties
-        let currentPage = 1;
-        const propertiesPerPage = 6; // Number of properties to show per page
-
-        const sampleProperties = [
-            {
-                id: 1,
-                title: "Modern 2-Bedroom Apartment",
-                location: "Westlands, Nairobi",
-                price: 85000,
-                type: "apartment",
-                bedrooms: 2,
-                bathrooms: 2,
-                area: 1200,
-                imageUrl: "https://via.placeholder.com/400x200?text=Modern+Apartment",
-                features: ["Parking", "Security", "Gym", "Pool"],
-                coordinates: { lat: -1.2676, lng: 36.8108 },
-                description: "Beautiful modern apartment in the heart of Westlands with excellent amenities."
-            },
-            {
-                id: 2,
-                title: "Spacious Family House",
-                location: "Karen, Nairobi",
-                price: 150000,
-                type: "house",
-                bedrooms: 4,
-                bathrooms: 3,
-                area: 3000,
-                imageUrl: "https://via.placeholder.com/400x200?text=Family+House",
-                features: ["Garden", "Parking", "Security", "DSQ"],
-                coordinates: { lat: -1.3197, lng: 36.6859 },
-                description: "Spacious family home in Karen with a beautiful garden and servant quarters."
-            },
-            {
-                id: 3,
-                title: "Cozy Studio Apartment",
-                location: "Kilimani, Nairobi",
-                price: 45000,
-                type: "studio",
-                bedrooms: 1,
-                bathrooms: 1,
-                area: 400,
-                imageUrl: "https://via.placeholder.com/400x200?text=Studio+Apartment",
-                features: ["Parking", "Security", "WiFi"],
-                coordinates: { lat: -1.2921, lng: 36.7856 },
-                description: "Perfect studio apartment for young professionals in Kilimani."
-            },
-            {
-                id: 4,
-                title: "Luxury Penthouse",
-                location: "Upper Hill, Nairobi",
-                price: 250000,
-                type: "apartment",
-                bedrooms: 3,
-                bathrooms: 3,
-                area: 2500,
-                imageUrl: "https://via.placeholder.com/400x200?text=Luxury+Penthouse",
-                features: ["Parking", "Security", "Gym", "Pool", "Balcony", "City View"],
-                coordinates: { lat: -1.2921, lng: 36.8219 },
-                description: "Luxury penthouse with stunning city views and premium amenities."
-            },
-            {
-                id: 5,
-                title: "Affordable Bedsitter",
-                location: "Kasarani, Nairobi",
-                price: 25000,
-                type: "bedsitter",
-                bedrooms: 1,
-                bathrooms: 1,
-                area: 300,
-                imageUrl: "https://via.placeholder.com/400x200?text=Bedsitter",
-                features: ["Security", "Water"],
-                coordinates: { lat: -1.2297, lng: 36.8926 },
-                description: "Affordable bedsitter in a quiet neighborhood with good transport links."
-            },
-            {
-                id: 6,
-                title: "Executive Mansion",
-                location: "Runda, Nairobi",
-                price: 400000,
-                type: "mansion",
-                bedrooms: 5,
-                bathrooms: 5,
-                area: 5000,
-                imageUrl: "https://via.placeholder.com/400x200?text=Executive+Mansion",
-                features: ["Garden", "Parking", "Security", "Pool", "DSQ", "Study"],
-                coordinates: { lat: -1.2098, lng: 36.7640 },
-                description: "Executive mansion in Runda with all modern amenities and beautiful landscaping."
-            },
-             {
-                id: 7,
-                title: "Townhouse near CBD",
-                location: "Kileleshwa, Nairobi",
-                price: 120000,
-                type: "house",
-                bedrooms: 3,
-                bathrooms: 3,
-                area: 2000,
-                imageUrl: "https://via.placeholder.com/400x200?text=Townhouse+Kileleshwa",
-                features: ["Parking", "Security", "Backup Generator"],
-                coordinates: { lat: -1.2829, lng: 36.7828 },
-                description: "Spacious townhouse in Kileleshwa, close to CBD and amenities."
-            },
-            {
-                id: 8,
-                title: "Commercial Office Space",
-                location: "Upper Hill, Nairobi",
-                price: 300000,
-                type: "commercial",
-                bedrooms: 0,
-                bathrooms: 2,
-                area: 3500,
-                imageUrl: "https://via.placeholder.com/400x200?text=Office+Space+Upper+Hill",
-                features: ["Parking", "Security", "Lift", "Modern Facilities"],
-                coordinates: { lat: -1.2980, lng: 36.8160 },
-                description: "Premium office space in Upper Hill, ideal for growing businesses."
-            }
-        ];
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            allProperties = [...sampleProperties]; // Initialize allProperties
-            filteredProperties = [...allProperties]; // Initially, all properties are filtered properties
-            displayProperties(filteredProperties); // Display properties on page load
-            renderPagination(filteredProperties.length); // Render pagination
-            checkLoginStatus(); // From the original script
-        });
-
-        function formatPrice(price) {
-            return `KSh ${price.toLocaleString('en-KE')}`;
-        }
-
-        function createPropertyCard(property) {
-            const isFavorite = currentUser && favoriteProperties.some(fav => fav.id === property.id);
-            const favoriteBtnClass = isFavorite ? 'btn-primary' : 'btn-secondary';
-            const favoriteIcon = isFavorite ? 'fas fa-heart' : 'far fa-heart'; // Solid vs. outline heart
-
-            return `
-                <div class="property-card fade-in">
-                    <div class="property-image">
-                        <img src="${property.imageUrl}" alt="${property.title}">
-                    </div>
-                    <div class="property-info">
-                        <h3 class="property-title">${property.title}</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${property.location}</p>
-                        <p class="property-price">${formatPrice(property.price)} / month</p>
-                        <div class="property-features">
-                            ${property.bedrooms ? `<span class="feature"><i class="fas fa-bed"></i> ${property.bedrooms} Beds</span>` : ''}
-                            ${property.bathrooms ? `<span class="feature"><i class="fas fa-bath"></i> ${property.bathrooms} Baths</span>` : ''}
-                            ${property.area ? `<span class="feature"><i class="fas fa-ruler-combined"></i> ${property.area} sqft</span>` : ''}
-                        </div>
-                        <p>${property.description.substring(0, 70)}...</p>
-                        <div class="property-actions">
-                            <a href="#" class="btn btn-primary btn-small" onclick="viewPropertyDetails(${property.id})">View Details</a>
-                            <button class="btn btn-small ${favoriteBtnClass}" onclick="toggleFavorite(${property.id})">
-                                <i class="${favoriteIcon}"></i> Favorite
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function displayProperties(propertiesToDisplay) {
-            const propertiesGrid = document.getElementById('propertiesGrid');
-            propertiesGrid.innerHTML = ''; // Clear existing properties
-
-            const startIndex = (currentPage - 1) * propertiesPerPage;
-            const endIndex = startIndex + propertiesPerPage;
-            const paginatedProperties = propertiesToDisplay.slice(startIndex, endIndex);
-
-            if (paginatedProperties.length === 0) {
-                propertiesGrid.innerHTML = '<p class="text-center">No properties found matching your criteria.</p>';
-                return;
-            }
-
-            paginatedProperties.forEach(property => {
-                propertiesGrid.innerHTML += createPropertyCard(property);
-            });
-        }
-
-        function renderPagination(totalProperties) {
-            const paginationContainer = document.getElementById('propertyPagination');
-            paginationContainer.innerHTML = '';
-            const totalPages = Math.ceil(totalProperties / propertiesPerPage);
-
-            if (totalPages <= 1) return; // No pagination needed if only one page
-
-            if (currentPage > 1) {
-                paginationContainer.innerHTML += `<a href="#" onclick="changePage(${currentPage - 1})">« Prev</a>`;
-            }
-
-            for (let i = 1; i <= totalPages; i++) {
-                paginationContainer.innerHTML += `<a href="#" class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</a>`;
-            }
-
-            if (currentPage < totalPages) {
-                paginationContainer.innerHTML += `<a href="#" onclick="changePage(${currentPage + 1})">Next »</a>`;
-            }
-        }
-
-        function changePage(page) {
-            currentPage = page;
-            displayProperties(filteredProperties);
-            renderPagination(filteredProperties.length);
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of page
-        }
-
-        function searchProperties(event) {
-            event.preventDefault();
-            const location = document.getElementById('location').value.toLowerCase();
-            const propertyType = document.getElementById('propertyType').value.toLowerCase();
-            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
-            const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
-            const bedrooms = document.getElementById('bedrooms').value;
-            const sortOrder = document.getElementById('sortOrder').value;
-
-            filteredProperties = allProperties.filter(property => {
-                const matchesLocation = property.location.toLowerCase().includes(location);
-                const matchesType = propertyType === '' || property.type.toLowerCase() === propertyType;
-                const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
-                const matchesBedrooms = bedrooms === '' || (property.bedrooms && property.bedrooms >= parseInt(bedrooms));
-                return matchesLocation && matchesType && matchesPrice && matchesBedrooms;
-            });
-
-            // Sort properties
-            if (sortOrder === 'price-asc') {
-                filteredProperties.sort((a, b) => a.price - b.price);
-            } else if (sortOrder === 'price-desc') {
-                filteredProperties.sort((a, b) => b.price - a.price);
-            } else if (sortOrder === 'newest') {
-                // For 'newest', you'd typically have a 'dateAdded' field.
-                // For this example, we'll just keep the original order.
-                // In a real app, you'd sort by property.dateAdded descending.
-            }
-
-            currentPage = 1; // Reset to first page after a new search
-            displayProperties(filteredProperties);
-            renderPagination(filteredProperties.length);
-            showNotification(`Found ${filteredProperties.length} properties matching your criteria.`, 'info');
-        }
-
-        function viewPropertyDetails(propertyId) {
-            // In a real application, this would navigate to a detailed property page
-            // e.g., window.location.href = `property-details.html?id=${propertyId}`;
-            const property = allProperties.find(p => p.id === propertyId);
-            if (property) {
-                alert(`Viewing details for: ${property.title}\nLocation: ${property.location}\nPrice: ${formatPrice(property.price)}`);
-                // For a more advanced demo, you could open a modal with full details
-            }
-        }
-
-        function toggleFavorite(propertyId) {
-            if (!currentUser) {
-                showNotification('Please login to favorite properties.', 'warning');
-                openModal('loginModal');
-                return;
-            }
-
-            const propertyIndex = favoriteProperties.findIndex(prop => prop.id === propertyId);
-            const property = allProperties.find(prop => prop.id === propertyId);
-
-            if (propertyIndex > -1) {
-                // Property is already favorited, remove it
-                favoriteProperties.splice(propertyIndex, 1);
-                showNotification(`Removed "${property.title}" from favorites.`, 'info');
-            } else {
-                // Property is not favorited, add it
-                favoriteProperties.push(property);
-                showNotification(`Added "${property.title}" to favorites!`, 'success');
-            }
-            // Re-render properties to update favorite button state
-            displayProperties(filteredProperties);
-            // In a real app, save favoriteProperties to localStorage or backend
-        }
-
-        // Reused Modal/Auth/Dashboard functions from your original index.html script
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Keep login client-side for this example's scope, but it would also use fetch for a real backend
-        function login(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            // Simulate login process (simplified)
-            currentUser = {
-                id: 1, // This ID won't match a backend ID, it's just for local simulation
-                name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
-                email: email,
-                role: 'tenant',
-                avatar: email.charAt(0).toUpperCase()
-            };
-            updateAuthUI();
-            closeModal('loginModal');
-            showNotification('Login successful! Welcome back.', 'success');
-        }
-
-        // --- MODIFIED REGISTER FUNCTION TO INTERACT WITH YOUR BACKEND ---
-        async function register(event) {
-            event.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const phone = document.getElementById('registerPhone').value;
-            const password = document.getElementById('registerPassword').value;
-            const role = document.getElementById('registerRole').value;
-
-            // Data to send to your backend
-            const userData = { name, email, phone, password, role };
-
-            try {
-                // *** This is the crucial change: Point to your backend's registration endpoint ***
-                const response = await fetch('http://localhost:5000/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userData),
-                });
-
-                const result = await response.json(); // Parse the JSON response from the backend
-
-                if (response.ok) { // Check if the response status is 2xx (success)
-                    // Backend successfully registered the user.
-                    // Now, update frontend state to reflect logged-in user,
-                    // using data potentially returned by the backend (like user.id, user.name).
-                    currentUser = {
-                        id: result.user.id, // Use the ID provided by your backend
-                        name: result.user.name,
-                        email: result.user.email,
-                        role: result.user.role,
-                        avatar: result.user.name.charAt(0).toUpperCase()
-                    };
-                    updateAuthUI(); // Update header to show logged-in user
-                    closeModal('registerModal'); // Close registration modal
-                    showNotification(result.message || 'Registration successful! Welcome to HomeHunter Kenya.', 'success');
-
-                    // In a real application, if your backend returns an authentication token (JWT),
-                    // you would store it here:
-                    // localStorage.setItem('authToken', result.token);
-                } else {
-                    // Handle errors from the backend (e.g., email already exists, validation errors)
-                    // The backend should send a helpful `message` in its JSON response.
-                    showNotification(result.message || 'Registration failed. Please check your inputs.', 'error');
-                }
-            } catch (error) {
-                // Handle network errors (e.g., backend server not running, connection refused)
-                console.error('Error during registration (frontend network/parsing error):', error);
-                showNotification('Network error or server unavailable. Please try again later.', 'error');
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            favoriteProperties = []; // Clear favorites on logout
-            updateAuthUI();
-            // In a real app, you would also clear any stored tokens (e.g., from localStorage)
-            // localStorage.removeItem('authToken');
-            hideDashboard(); // Assuming this function exists on your dashboard page
-            showNotification('Logged out successfully.', 'info');
-            // Re-render properties to remove favorite states
-            displayProperties(filteredProperties);
-        }
-
-        function updateAuthUI() {
-            const authButtons = document.getElementById('authButtons');
-            const userMenu = document.getElementById('userMenu');
-
-            if (currentUser) {
-                authButtons.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                // The dashboard specific elements (userName, userEmail, userAvatar)
-                // are not on this 'properties.html' page, so commenting them out here.
-                // They would be relevant for your dashboard.html
-            } else {
-                authButtons.classList.remove('hidden');
-                userMenu.classList.add('hidden');
-            }
-        }
-
-        function checkLoginStatus() {
-            // This function would typically check for a token in localStorage
-            // or make an API call to verify the session.
-            // For this static HTML, it simply ensures the UI is correct if `currentUser` is somehow set.
-            // In a real app:
-            // const token = localStorage.getItem('authToken');
-            // if (token) {
-            //     // Make an API call to your backend to validate the token and get user info
-            //     // fetch('http://localhost:5000/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` }})
-            //     //   .then(res => res.json())
-            //     //   .then(userFromServer => { currentUser = userFromServer; updateAuthUI(); })
-            //     //   .catch(err => { console.error('Token validation failed', err); localStorage.removeItem('authToken'); });
-            // }
-            updateAuthUI(); // Keep this to correctly display auth buttons based on initial currentUser state
-        }
-
-        // This function would be on dashboard.html if you want to show/hide it from properties.html
-        function showDashboard() {
-            // For now, redirecting, as dashboard content is likely on another page.
-            // In a single-page app, you'd show/hide a div.
-            if (currentUser) {
-                alert(`Redirecting to Dashboard for ${currentUser.name}.`);
-                // window.location.href = 'dashboard.html'; // Example redirect
-            } else {
-                showNotification('Please log in to view your dashboard.', 'warning');
-            }
-        }
-
-        // Placeholder for hideDashboard if it's meant to hide elements on this page
-        function hideDashboard() {
-            // If there was a dashboard section on this page, you'd hide it here.
-            // document.getElementById('userDashboardSection').classList.add('hidden');
-        }
-
-        // Simple notification system
-        function showNotification(message, type = 'info') {
-            // You can implement a more sophisticated notification system (e.g., a div that appears and fades)
-            // For now, using alert, but consider libraries like Toastify.js or a custom CSS/JS solution.
-            alert(`${type.toUpperCase()}: ${message}`);
-        }
-    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
