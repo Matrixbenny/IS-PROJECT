@@ -26,6 +26,10 @@ function togglePasswordVisibility(id) {
     }
 }
 
+// Backend URL constant (important for fetch requests)
+// Ensure this matches your server.js port
+const backendUrl = 'http://localhost:5000'; // Define backendUrl here if not in a global script.js
+
 // Function to handle user registration
 async function register(event) {
     event.preventDefault(); // Prevent default form submission
@@ -34,12 +38,19 @@ async function register(event) {
     const email = document.getElementById('registerEmail').value;
     const phone = document.getElementById('registerPhone').value;
     const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value; // Added this line
     const role = document.getElementById('registerRole').value;
 
-    if (!name || !email || !phone || !password || !role) {
-        showNotification('Please fill in all fields.', 'error'); // Use unified notification
+    if (!name || !email || !phone || !password || !confirmPassword || !role) { // Updated validation
+        showNotification('Please fill in all fields.', 'error');
         return;
     }
+
+    if (password !== confirmPassword) { // Added password confirmation check
+        showNotification('Passwords do not match.', 'error');
+        return;
+    }
+
     if (password.length < 8) {
         showNotification('Password must be at least 8 characters long.', 'error');
         return;
@@ -51,19 +62,34 @@ async function register(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:5000/api/register', { // Corrected port to 5000
+        const response = await fetch(`${backendUrl}/api/register`, { // Use backendUrl constant
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, phone, password, role }),
+            // --- MODIFIED: Ensure keys match backend's expected `req.body` properties ---
+            body: JSON.stringify({
+                fullName: name, // Matches backend: req.body.fullName
+                emailAddress: email, // Matches backend: req.body.emailAddress
+                phoneNumber: phone,   // Matches backend: req.body.body.phoneNumber
+                password: password,
+                userRole: role      // Matches backend: req.body.userRole
+            }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            showNotification('Registration successful! Please log in.', 'success');
-            window.location.href = 'login.html'; // Redirect to login page after successful registration
+            // --- MODIFIED: Store token and user data received from the backend ---
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({
+                id: data.user.id,
+                name: data.user.name,
+                email: data.user.email,
+                role: data.user.role
+            }));
+            showNotification('Registration successful! You are now logged in.', 'success');
+            window.location.href = 'index.html'; // Redirect directly to the dashboard
         } else {
             showNotification(`Registration failed: ${data.message || 'Something went wrong.'}`, 'error');
         }
@@ -81,12 +107,12 @@ async function login(event) {
     const password = document.getElementById('loginPassword').value;
 
     if (!email || !password) {
-        showNotification('Please enter both email and password.', 'error'); // Use unified notification
+        showNotification('Please enter both email and password.', 'error');
         return;
     }
 
     try {
-        const response = await fetch('http://localhost:5000/api/login', { // Corrected port to 5000
+        const response = await fetch(`${backendUrl}/api/login`, { // Use backendUrl constant
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

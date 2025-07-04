@@ -1,92 +1,192 @@
-/\*\* script.js - Full client logic for HomeHunter Kenya \*\*/
+/** script.js - Full client logic for HomeHunter Kenya **/
 
-const backendUrl = '[http://localhost:5000/api](http://localhost:5000/api)';
-let allProperties = \[];
+const backendUrl = 'http://localhost:5000/api'; // CORRECTED: Removed markdown link syntax
+let allProperties = [];
 
 // --- Load properties on DOM ready ---
 document.addEventListener('DOMContentLoaded', async function () {
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
 
-try {
-const response = await fetch(`${backendUrl}/properties`);
-if (response.ok) {
-allProperties = await response.json();
-displayProperties(allProperties);
-} else {
-console.error('Failed to load properties');
-}
-} catch (error) {
-console.error('Error fetching properties:', error);
-}
+    // Check if user is logged in and display relevant elements
+    if (token && user) {
+        document.getElementById('loggedInNav').style.display = 'flex';
+        document.getElementById('loggedOutNav').style.display = 'none';
+        document.getElementById('userNameDisplay').textContent = user.name;
+    } else {
+        document.getElementById('loggedInNav').style.display = 'none';
+        document.getElementById('loggedOutNav').style.display = 'flex';
+    }
+
+    try {
+        const response = await fetch(`${backendUrl}/properties`);
+        if (response.ok) {
+            allProperties = await response.json();
+            displayProperties(allProperties);
+        } else {
+            console.error('Failed to load properties');
+        }
+    } catch (error) {
+        console.error('Error fetching properties:', error);
+    }
+
+    // Initial load for property details if on property-details.html
+    if (document.body.id === 'property-details-page') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('id');
+        if (propertyId) {
+            fetchPropertyDetails(propertyId);
+        }
+    }
 });
+
+
+// Function to toggle mobile menu (if you have one)
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+});
+
 
 // --- Display Properties ---
 function displayProperties(properties) {
-const grid = document.getElementById('propertiesGrid');
-if (!grid) return;
+    const grid = document.getElementById('propertiesGrid');
+    if (!grid) return;
 
-grid.innerHTML = '';
-properties.forEach(p => {
-const card = document.createElement('div');
-card.className = 'property-card';
-card.innerHTML = `       <img src="${p.imageUrls?.[0] || 'placeholder.jpg'}" alt="Property Image" class="property-image">       <div class="property-info">         <h3 class="property-title">${p.title}</h3>         <p class="property-location">${p.location}</p>         <p class="property-price">Ksh ${p.price.toLocaleString()}</p>         <div class="property-features">           <span>${p.bedrooms} Beds</span>           <span>${p.bathrooms} Baths</span>           <span>${p.type}</span>         </div>         <div class="property-actions">           <button class="btn btn-primary" onclick="viewDetails('${p._id}')">View Details</button>           <button class="btn btn-secondary" onclick="likeProperty('${p._id}')">❤</button>         </div>       </div>
-    `;
-grid.appendChild(card);
-});
+    grid.innerHTML = '';
+    properties.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'property-card';
+        card.innerHTML = `
+            <img src="${p.imageUrls?.[0] || 'placeholder.jpg'}" alt="Property Image" class="property-image">
+            <div class="property-info">
+                <h3 class="property-title">${p.title}</h3>
+                <p class="property-location">${p.location}</p>
+                <p class="property-price">Ksh ${p.price.toLocaleString()}</p>
+                <div class="property-features">
+                    <span>${p.bedrooms} Beds</span>
+                    <span>${p.bathrooms} Baths</span>
+                    <span>${p.type}</span>
+                </div>
+                <div class="property-actions">
+                    <button onclick="viewDetails('${p._id}')">View Details</button>
+                    <button onclick="likeProperty('${p._id}')">❤</button>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
 // --- View Property Details ---
+async function fetchPropertyDetails(propertyId) {
+    try {
+        const response = await fetch(`${backendUrl}/properties/${propertyId}`);
+        if (response.ok) {
+            const property = await response.json();
+            // Render property details on the page
+            document.getElementById('detailTitle').textContent = property.title;
+            document.getElementById('detailPrice').textContent = `Ksh ${property.price.toLocaleString()}`;
+            document.getElementById('detailLocation').textContent = property.location;
+            document.getElementById('detailBeds').textContent = `${property.bedrooms} Beds`;
+            document.getElementById('detailBaths').textContent = `${property.bathrooms} Baths`;
+            document.getElementById('detailType').textContent = property.type;
+            document.getElementById('detailDescription').textContent = property.description;
+            document.getElementById('detailOwnerPhone').textContent = property.ownerPhone;
+
+            const featuresList = document.getElementById('detailFeatures');
+            featuresList.innerHTML = '';
+            property.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featuresList.appendChild(li);
+            });
+
+            const gallery = document.getElementById('propertyGallery');
+            gallery.innerHTML = '';
+            property.imageUrls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Property Image';
+                gallery.appendChild(img);
+            });
+
+        } else {
+            console.error('Failed to load property details');
+            document.getElementById('property-details-container').innerHTML = '<p>Property not found or an error occurred.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching property details:', error);
+        document.getElementById('property-details-container').innerHTML = '<p>An error occurred while loading property details.</p>';
+    }
+}
+
+
 function viewDetails(propertyId) {
-window\.location.href = `property-details.html?id=${propertyId}`;
+    window.location.href = `property-details.html?id=${propertyId}`;
 }
 
 // --- Like/Favorite a Property ---
 async function likeProperty(propertyId) {
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
 
-if (!token || !user) return alert('Login required to like properties');
+    if (!token || !user) return showNotification('Login required to like properties', 'error');
 
-try {
-const res = await fetch(`${backendUrl}/users/${user.id}/favorites`, {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-'Authorization': `Bearer ${token}`
-},
-body: JSON.stringify({ propertyId })
-});
-if (res.ok) {
-alert('Property added to favorites!');
-} else {
-const data = await res.json();
-alert(data.message || 'Failed to like property');
+    try {
+        const res = await fetch(`${backendUrl.replace('/api', '')}/users/${user.id}/favorites`, { // Adjusted URL for favorites endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ propertyId })
+        });
+        if (res.ok) {
+            showNotification('Property added to favorites!', 'success');
+        } else {
+            const data = await res.json();
+            showNotification(data.message || 'Failed to like property', 'error');
+        }
+    } catch (err) {
+        console.error('Error liking property:', err);
+        showNotification('An error occurred while liking property', 'error');
+    }
 }
-} catch (err) {
-console.error('Error liking property:', err);
-}
-}
+
 
 // --- Generate AI Recommendations ---
 async function generateRecommendations() {
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
 
-if (!token || !user) return alert('Login required');
+    if (!token || !user) return showNotification('Login required to get recommendations', 'error');
 
-try {
-const res = await fetch(`${backendUrl}/recommendations`, {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-'Authorization': `Bearer ${token}`
-},
-body: JSON.stringify({ userId: user.id })
-});
-const data = await res.json();
-displayProperties(data.recommendations);
-} catch (err) {
-console.error('Error getting recommendations:', err);
-}
+    try {
+        const res = await fetch(`${backendUrl.replace('/api', '')}/recommendations`, { // Adjusted URL for recommendations endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId: user.id })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            showNotification('Recommendations generated!', 'success');
+            // Here you would typically display these recommendations
+            console.log('AI Recommendations:', data.recommendations);
+            // Example: displayRecommendations(data.recommendations);
+        } else {
+            showNotification(data.message || 'Failed to get recommendations', 'error');
+        }
+    } catch (err) {
+        console.error('Error generating recommendations:', err);
+        showNotification('An error occurred while getting recommendations', 'error');
+    }
 }

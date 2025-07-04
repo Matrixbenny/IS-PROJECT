@@ -49,16 +49,61 @@ const auth = (req, res, next) => {
 
 // --- Register ---
 app.post('/api/register', async (req, res) => {
-    const { name, email, phone, password, role } = req.body;
+    // MODIFIED: Destructure body to match frontend's auth.js data structure
+    const { fullName, emailAddress, phoneNumber, password, userRole } = req.body;
+
+    // Basic validation
+    if (!fullName || !emailAddress || !phoneNumber || !password || !userRole) {
+        return res.status(400).json({ message: 'Please enter all fields.' });
+    }
+
     try {
-        const existing = await User.findOne({ email });
-        if (existing) return res.status(400).json({ message: 'Email already in use' });
+        let user = await User.findOne({ email: emailAddress }); // Check using emailAddress
+        if (user) {
+            return res.status(400).json({ message: 'User with that email already exists.' });
+        }
 
-        const user = new User({ name, email, phone, password, role });
-        await user.save();
+        // Create new user instance, mapping frontend names to backend model names
+        const newUser = new User({
+            name: fullName,       // Frontend fullName maps to backend name
+            email: emailAddress, // Frontend emailAddress maps to backend email
+            phone: phoneNumber,   // Frontend phoneNumber maps to backend phone
+            password: password,   // Password hashing handled by pre('save') hook in models/User.js
+            role: userRole        // Frontend userRole maps to backend role
+        });
 
-        res.status(201).json({ message: 'Registration successful', user: { id: user._id, name, email, role } });
+        await newUser.save();
+
+        // After successful registration, generate a token and send it back
+        const payload = {
+            user: {
+                id: newUser._id,
+                role: newUser.role
+            }
+        };
+
+        jwt.sign(
+            payload,
+            JWT_SECRET,
+            { expiresIn: '1h' }, // Token expires in 1 hour
+            (err, token) => {
+                if (err) throw err;
+                // Send token and specific user details back to the frontend
+                res.status(201).json({
+                    message: 'Registration successful and automatically logged in!',
+                    token,
+                    user: {
+                        id: newUser._id,
+                        name: newUser.name,
+                        email: newUser.email,
+                        role: newUser.role
+                    }
+                });
+            }
+        );
+
     } catch (err) {
+        console.error('Registration error:', err.message);
         res.status(500).json({ message: 'Registration error', error: err.message });
     }
 });
@@ -75,6 +120,7 @@ app.post('/api/login', async (req, res) => {
         const token = jwt.sign({ user: { id: user._id, role: user.role } }, JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {
+        console.error('Login error:', err.message);
         res.status(500).json({ message: 'Login error', error: err.message });
     }
 });
@@ -86,6 +132,7 @@ app.post('/api/properties', auth, async (req, res) => {
         await property.save();
         res.status(201).json(property);
     } catch (err) {
+        console.error('Property creation error:', err.message);
         res.status(400).json({ message: 'Property creation error', error: err.message });
     }
 });
@@ -107,6 +154,7 @@ app.get('/api/properties', async (req, res) => {
         const properties = await Property.find(query);
         res.json(properties);
     } catch (err) {
+        console.error('Property fetch error:', err.message);
         res.status(500).json({ message: 'Property fetch error', error: err.message });
     }
 });
@@ -118,6 +166,7 @@ app.get('/api/properties/:id', async (req, res) => {
         if (!property) return res.status(404).json({ message: 'Property not found' });
         res.json(property);
     } catch (err) {
+        console.error('Error fetching property:', err.message);
         res.status(500).json({ message: 'Error fetching property', error: err.message });
     }
 });
@@ -125,19 +174,25 @@ app.get('/api/properties/:id', async (req, res) => {
 // --- Favorites ---
 app.post('/api/users/:id/favorites', auth, async (req, res) => {
     try {
+        // Ensure propertyId is sent in the request body
+        if (!req.body.propertyId) {
+            return res.status(400).json({ message: 'Property ID is required.' });
+        }
         const fav = new Favorite({ userId: req.params.id, propertyId: req.body.propertyId });
         await fav.save();
         res.status(201).json(fav);
     } catch (err) {
+        console.error('Error adding favorite:', err.message);
         res.status(500).json({ message: 'Error adding favorite', error: err.message });
     }
 });
 
 app.get('/api/users/:id/favorites', auth, async (req, res) => {
     try {
-        const favorites = await Favorite.find({ userId: req.params.id });
+        const favorites = await Favorite.find({ userId: req.params.id }).populate('propertyId'); // Populate to get property details
         res.json(favorites);
     } catch (err) {
+        console.error('Error fetching favorites:', err.message);
         res.status(500).json({ message: 'Error fetching favorites', error: err.message });
     }
 });
@@ -147,6 +202,7 @@ app.delete('/api/users/:id/favorites/:propertyId', auth, async (req, res) => {
         await Favorite.deleteOne({ userId: req.params.id, propertyId: req.params.propertyId });
         res.json({ message: 'Favorite removed' });
     } catch (err) {
+        console.error('Error deleting favorite:', err.message);
         res.status(500).json({ message: 'Error deleting favorite', error: err.message });
     }
 });
@@ -156,18 +212,21 @@ app.post('/api/users/:id/search-history', auth, async (req, res) => {
     try {
         const record = new SearchHistory({ userId: req.params.id, filters: req.body });
         await record.save();
-        const history = await SearchHistory.find({ userId: req.params.id });
+        // Optionally, return the full history, or just a confirmation
+        const history = await SearchHistory.find({ userId: req.params.id }).sort({ timestamp: -1 });
         res.json({ message: 'Search saved', searchHistory: history });
     } catch (err) {
+        console.error('Error saving history:', err.message);
         res.status(500).json({ message: 'Error saving history', error: err.message });
     }
 });
 
 app.get('/api/users/:id/search-history', auth, async (req, res) => {
     try {
-        const history = await SearchHistory.find({ userId: req.params.id });
+        const history = await SearchHistory.find({ userId: req.params.id }).sort({ timestamp: -1 }); // Sort by newest first
         res.json(history);
     } catch (err) {
+        console.error('Error fetching history:', err.message);
         res.status(500).json({ message: 'Error fetching history', error: err.message });
     }
 });
@@ -182,6 +241,7 @@ app.put('/api/users/:id/preferences', auth, async (req, res) => {
         );
         res.json({ message: 'Preferences saved', preferences: updated.preferences });
     } catch (err) {
+        console.error('Error saving preferences:', err.message);
         res.status(500).json({ message: 'Error saving preferences', error: err.message });
     }
 });
@@ -191,6 +251,7 @@ app.get('/api/users/:id/preferences', auth, async (req, res) => {
         const prefs = await UserPreferences.findOne({ userId: req.params.id });
         res.json(prefs?.preferences || {});
     } catch (err) {
+        console.error('Error fetching preferences:', err.message);
         res.status(500).json({ message: 'Error fetching preferences', error: err.message });
     }
 });
@@ -206,6 +267,7 @@ app.post('/api/recommendations', auth, async (req, res) => {
         const data = await flaskResponse.json();
         res.json({ recommendations: data });
     } catch (err) {
+        console.error('AI recommendation error:', err.message);
         res.status(500).json({ message: 'AI recommendation error', error: err.message });
     }
 });

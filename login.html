@@ -41,53 +41,10 @@
         </p>
     </div>
 
+    <script src="js/auth.js"></script>
     <script>
-        // This function can be placed in js/script.js or kept here
-        function togglePasswordVisibility(id) {
-            const input = document.getElementById(id);
-            const icon = input.nextElementSibling.querySelector('i'); // Assuming icon is directly after input
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
-        const backendUrl = 'http://localhost:5000/api'; // Ensure this matches your backend API URL
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent default form submission
-
-            const email = document.getElementById('loginEmail').value; // Use consistent ID
-            const password = document.getElementById('loginPassword').value; // Use consistent ID
-
-            try {
-                const res = await fetch(`${backendUrl}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await res.json(); // Parse the JSON response
-                if (res.ok) { // Check if the response status is 2xx (success)
-                    localStorage.setItem('token', data.token); // Store token
-                    localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
-                    alert('✅ Login successful!');
-                    window.location.href = 'index.html'; // Redirect to homepage
-                } else {
-                    // Handle non-2xx responses (e.g., 401 Unauthorized, 400 Bad Request)
-                    alert(data.message || 'Login failed');
-                }
-            } catch (err) {
-                // Handle network errors or other exceptions
-                alert('Login error: Could not connect to the server or unexpected issue occurred.');
-                console.error('Login request failed:', err);
-            }
-        });
+        // Attach the login function from auth.js to the form's submit event
+        document.getElementById('loginForm').addEventListener('submit', login);
     </script>
 </body>
 </html>
