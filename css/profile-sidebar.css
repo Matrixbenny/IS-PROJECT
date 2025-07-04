@@ -1,0 +1,37 @@
+/* Sidebar profile card styles for home.html */
+.sidebar-profile {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 260px;
+    background: #fff;
+    border-radius: 0 15px 15px 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.07);
+    padding: 30px 20px;
+    z-index: 100;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-card {
+    text-align: center;
+}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+.main-content-with-sidebar {
+    margin-left: 280px;
+}
+@media (max-width: 900px) {
+    .sidebar-profile {
+        display: none;
+    }
+    .main-content-with-sidebar {
+        margin-left: 0;
+    }
+}

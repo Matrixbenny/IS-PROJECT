@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeHunter Kenya - Find Your Perfect Home</title>
+    <title>HomeHunter Kenya - Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile-sidebar.css">
 </head>
 <body>
     <header>
@@ -15,22 +16,15 @@
                 HomeHunter Kenya
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="home.html">Home</a></li>
                 <li><a href="properties.html">Properties</a></li>
                 <li><a href="map-view.html">Map View</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
-            <div class="auth-buttons" id="authButtons">
-                <a href="login.html" class="btn btn-secondary">Login</a>
-                <a href="register.html" class="btn btn-primary">Register</a>
-            </div>
-            <div class="user-menu hidden" id="userMenu">
+            <div class="user-menu" id="userMenu" style="display: flex; align-items: center;">
                 <div class="user-avatar" id="userAvatarDisplay"></div>
                 <span class="user-name" id="userNameDisplay"></span>
-                <button class="btn btn-primary btn-small" onclick="showDashboard()">
-                    <i class="fas fa-user"></i> Dashboard
-                </button>
                 <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
             </div>
             <div class="menu-toggle" id="menuToggle">
@@ -39,11 +33,25 @@
         </nav>
     </header>
 
-    <main>
+    <div class="sidebar-profile" id="sidebarProfile">
+        <div class="profile-card">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=KenyaUser" alt="User Avatar" id="profileAvatar" class="profile-avatar" style="border: 3px solid #667eea; box-shadow: 0 2px 8px rgba(102,126,234,0.15);">
+                <button class="btn btn-small mt-2" onclick="changeAvatar()" style="margin-top: 10px;">Change Avatar</button>
+            </div>
+            <h3 id="profileName">User Name</h3>
+            <p id="profileEmail">user@example.com</p>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
+        </div>
+    </div>
+
+    <main class="main-content-with-sidebar">
+        <!-- Copy your main content from index.html here, but remove login/register buttons and show all features -->
         <section class="hero-section text-center fade-in">
             <div class="container">
-                <h1>Find Your Dream Home in Kenya</h1>
-                <p class="hero-subtitle">Discover properties for sale and rent across Kenya. Your perfect match is just a click away.</p>
+                <h1>Welcome Back to HomeHunter Kenya!</h1>
+                <p class="hero-subtitle">Find, favorite, and manage your dream properties with your personalized dashboard.</p>
                 <form class="search-bar-hero" id="searchForm">
                     <input type="text" id="location" placeholder="Enter location (e.g., Westlands, Nairobi)">
                     <select id="propertyType">
@@ -59,7 +67,6 @@
                 </form>
             </div>
         </section>
-
         <section class="quick-links-section fade-in">
             <div class="container">
                 <h2 class="text-center mb-2">Quick Access</h2>
@@ -82,24 +89,21 @@
                 </div>
             </div>
         </section>
-
         <section class="properties-section fade-in">
             <div class="container d-flex-between">
                 <h2>AI-Powered Recommendations</h2>
                 <p>Based on your preferences and search history</p>
             </div>
             <div class="properties-grid" id="aiRecommendations">
-                </div>
+            </div>
         </section>
-
         <section class="properties-section fade-in">
             <div class="container">
                 <h2 class="text-center mb-2">Available Properties</h2>
                 <div class="properties-grid" id="propertiesGrid">
-                    </div>
+                </div>
             </div>
         </section>
-
         <section class="map-container fade-in" id="mapSection">
             <div class="container">
                 <h2 class="text-center mb-2">Explore Neighborhoods</h2>
@@ -124,28 +128,40 @@
 
     <script src="js/script.js"></script>
     <script>
-        // Restrict actions for guests and redirect to login for protected features
-        function requireLogin(action) {
-            if (!localStorage.getItem('user')) {
-                alert('Please log in or register to use this feature.');
-                window.location.href = 'login.html';
-                return false;
-            }
-            return true;
-        }
-        // Example: Attach to protected buttons (if any)
-        // document.getElementById('favoriteBtn').onclick = function() {
-        //     if (!requireLogin()) return;
-        //     // ...favorite logic...
-        // };
-        // Hide user menu and show auth buttons for guests
+        // Fill profile card with user info from localStorage
         document.addEventListener('DOMContentLoaded', function() {
-            if (!localStorage.getItem('user')) {
-                document.getElementById('userMenu').classList.add('hidden');
-                document.getElementById('authButtons').classList.remove('hidden');
-            } else {
-                // If user is logged in, redirect to home.html
-                window.location.href = 'home.html';
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('profileName').textContent = user.name || 'User Name';
+                document.getElementById('profileEmail').textContent = user.email || 'user@example.com';
+                if (user.avatar) {
+                    document.getElementById('profileAvatar').src = user.avatar;
+                } else {
+                    document.getElementById('profileAvatar').src = "https://api.dicebear.com/7.x/adventurer/svg?seed=KenyaUser";
+                }
+            }
+        });
+        function logout() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+        // Avatar upload logic
+        function changeAvatar() {
+            document.getElementById('avatarInput').click();
+        }
+        document.getElementById('avatarInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileAvatar').src = e.target.result;
+                    // Save avatar to localStorage user object
+                    let user = JSON.parse(localStorage.getItem('user')) || {};
+                    user.avatar = e.target.result;
+                    localStorage.setItem('user', JSON.stringify(user));
+                };
+                reader.readAsDataURL(file);
             }
         });
     </script>
