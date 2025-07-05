@@ -70,6 +70,9 @@
             color: #667eea;
             font-size: 1.2rem;
         }
+
+        .required { color: red; font-weight: bold; }
+        .form-note { color: #d32f2f; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -114,17 +117,18 @@
 
                 <form id="mortgageCalculatorForm" class="calculator-form">
                     <div class="form-group">
-                        <label for="loanAmount"><i class="fas fa-money-bill-wave"></i> Loan Amount (KSh)</label>
+                        <label for="loanAmount"><i class="fas fa-money-bill-wave"></i> Loan Amount (KSh) <span class="required">*</span></label>
                         <input type="number" id="loanAmount" placeholder="e.g., 5000000" min="1" required>
                     </div>
                     <div class="form-group">
-                        <label for="interestRate"><i class="fas fa-percent"></i> Annual Interest Rate (%)</label>
+                        <label for="interestRate"><i class="fas fa-percent"></i> Annual Interest Rate (%) <span class="required">*</span></label>
                         <input type="number" id="interestRate" placeholder="e.g., 7.5" step="0.01" min="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label for="loanTerm"><i class="fas fa-calendar-alt"></i> Loan Term (Years)</label>
+                        <label for="loanTerm"><i class="fas fa-calendar-alt"></i> Loan Term (Years) <span class="required">*</span></label>
                         <input type="number" id="loanTerm" placeholder="e.g., 20" min="1" required>
                     </div>
+                    <p class="form-note"><span class="required">*</span> All fields are mandatory</p>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-calculator"></i> Calculate Payment</button>
                 </form>
 

@@ -6,6 +6,10 @@
     <title>Contact Us - HomeHunter Kenya</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css"> 
+    <style>
+      .required { color: red; font-weight: bold; }
+      .form-note { color: #d32f2f; margin-bottom: 10px; }
+    </style>
     </head>
 <body>
     <header>
@@ -64,22 +68,23 @@
             </div>
 
             <h2 class="text-center mb-2 mt-4">Send Us a Message</h2>
-            <form class="contact-form">
+            <form class="contact-form" id="contactForm">
+                <p class="form-note"><span class="required">*</span> All fields are mandatory</p>
                 <div class="form-group">
-                    <label for="contactName">Your Name</label>
-                    <input type="text" id="contactName" placeholder="Your Name" required>
+                    <label for="contactName">Your Name <span class="required">*</span></label>
+                    <input type="text" id="contactName" placeholder="Your Name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="contactEmail">Your Email</label>
-                    <input type="email" id="contactEmail" placeholder="you@example.com" required>
+                    <label for="contactEmail">Your Email <span class="required">*</span></label>
+                    <input type="email" id="contactEmail" placeholder="you@example.com" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="contactSubject">Subject</label>
                     <input type="text" id="contactSubject" placeholder="Subject of your message" required>
                 </div>
                 <div class="form-group">
-                    <label for="contactMessage">Message</label>
-                    <textarea id="contactMessage" rows="6" placeholder="Your message here..." required></textarea>
+                    <label for="contactMessage">Message <span class="required">*</span></label>
+                    <textarea id="contactMessage" rows="6" placeholder="Your message here..." name="message" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Send Message</button>
             </form>
