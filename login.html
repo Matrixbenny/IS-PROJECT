@@ -49,7 +49,26 @@
     <script src="js/auth.js"></script>
     <script>
         // Attach the login function from auth.js to the form's submit event
-        document.getElementById('loginForm').addEventListener('submit', login);
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Perform the login logic here
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Simulate an API call to authenticate the user
+            setTimeout(() => {
+                // For demonstration, assume the login is always successful
+                const user = { email, role: 'agent', status: 'pending' }; // Mock user data
+                localStorage.setItem('user', JSON.stringify(user));
+
+                if (user.role === 'agent' && user.status === 'pending') {
+                    window.location.href = 'agent-profile.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+        });
     </script>
 </body>
 </html>

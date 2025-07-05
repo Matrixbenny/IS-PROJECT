@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agent Profile - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .agent-profile-section { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 32px; box-shadow: 0 2px 8px #0001; }
+        .agent-profile-section h1 { text-align: center; margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        .btn { padding: 10px 24px; border: none; border-radius: 5px; background: #667eea; color: #fff; cursor: pointer; }
+        .pending-msg { color: #d32f2f; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="agent-profile-section">
+            <h1>Agent Profile Setup</h1>
+            <form id="agentProfileForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="license">Agent License Number <span class="required">*</span></label>
+                    <input type="text" id="license" name="license" required>
+                </div>
+                <div class="form-group">
+                    <label for="idNumber">National ID/Passport Number <span class="required">*</span></label>
+                    <input type="text" id="idNumber" name="idNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="agency">Agency Name (if any)</label>
+                    <input type="text" id="agency" name="agency">
+                </div>
+                <div class="form-group">
+                    <label for="bio">Short Bio</label>
+                    <textarea id="bio" name="bio"></textarea>
+                </div>
+                <button type="submit" class="btn">Submit for Approval</button>
+            </form>
+            <div class="pending-msg" id="pendingMsg" style="display:none;">
+                Your details have been submitted for admin approval. You will be notified once approved.
+            </div>
+        </section>
+    </main>
+    <script>
+        // Redirect non-agents away
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'agent') {
+                window.location.href = 'index.html';
+                return;
+            }
+            if (user.status === 'pending') {
+                document.getElementById('agentProfileForm').style.display = 'none';
+                document.getElementById('pendingMsg').style.display = 'block';
+            }
+        });
+
+        document.getElementById('agentProfileForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            // Collect form data
+            const data = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                license: document.getElementById('license').value,
+                idNumber: document.getElementById('idNumber').value,
+                agency: document.getElementById('agency').value,
+                bio: document.getElementById('bio').value,
+            };
+            // Send to backend for admin approval (replace URL with your API endpoint)
+            const user = JSON.parse(localStorage.getItem('user'));
+            await fetch('http://localhost:5000/api/agents/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + user.token
+                },
+                body: JSON.stringify(data)
+            });
+            // Set status to pending in localStorage
+            user.status = 'pending';
+            localStorage.setItem('user', JSON.stringify(user));
+            document.getElementById('agentProfileForm').style.display = 'none';
+            document.getElementById('pendingMsg').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

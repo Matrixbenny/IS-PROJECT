@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-section { max-width: 800px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 32px; box-shadow: 0 2px 8px #0001; }
+        .admin-section h1 { text-align: center; margin-bottom: 24px; }
+        .pending-agents-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+        .pending-agents-table th, .pending-agents-table td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        .pending-agents-table th { background: #f5f5f5; }
+        .action-btn { padding: 6px 14px; border: none; border-radius: 5px; cursor: pointer; }
+        .approve { background: #4caf50; color: #fff; }
+        .reject { background: #f44336; color: #fff; }
+        .logout-btn { float: right; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                HomeHunter Kenya
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="map-view.html">Map View</a></li>
+                <li><a href="about.html">About</a></li>
+                <!-- Add this in your navigation, but only show if user is admin -->
+                <li id="adminDashboardLink" style="display:none;"><a href="admin-dashboard.html">Admin Dashboard</a></li>
+            </ul>
+            <button class="btn btn-secondary logout-btn" onclick="logout()">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="admin-section">
+            <h1>Admin Dashboard</h1>
+            <h2>Pending Agent Approvals</h2>
+            <table class="pending-agents-table" id="pendingAgentsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Date Registered</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pending agents will be loaded here -->
+                </tbody>
+            </table>
+            <div id="adminActionsMsg"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 HomeHunter Kenya. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set mock admin user in localStorage for testing
+        localStorage.setItem('user', JSON.stringify({
+            name: "Benvictor",
+            email: "officialbillionaire.ke@gmail.com",
+            role: "admin",
+            token: "mock-admin-token",
+            status: "approved"
+        }));
+
+        // Protect this page: Only allow admins
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'admin') {
+                alert('Access denied. Admins only.');
+                window.location.href = 'index.html';
+                return;
+            }
+            document.getElementById('adminDashboardLink').style.display = 'block';
+            loadPendingAgents();
+        });
+
+        // Example: Fetch pending agents from backend API
+        async function loadPendingAgents() {
+            const tableBody = document.querySelector('#pendingAgentsTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            try {
+                // Replace with your backend API endpoint
+                const res = await fetch('http://localhost:5000/api/admin/pending-agents', {
+                    headers: { 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token }
+                });
+                const agents = await res.json();
+                if (!agents.length) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No pending agents.</td></tr>';
+                    return;
+                }
+                tableBody.innerHTML = '';
+                agents.forEach(agent => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${agent.name}</td>
+                        <td>${agent.email}</td>
+                        <td>${new Date(agent.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="action-btn approve" onclick="approveAgent('${agent._id}')">Approve</button>
+                            <button class="action-btn reject" onclick="rejectAgent('${agent._id}')">Reject</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            } catch (err) {
+                tableBody.innerHTML = '<tr><td colspan="4">Error loading agents.</td></tr>';
+            }
+        }
+
+        async function approveAgent(agentId) {
+            if (!confirm('Approve this agent?')) return;
+            await updateAgentStatus(agentId, 'approved');
+        }
+
+        async function rejectAgent(agentId) {
+            if (!confirm('Reject this agent?')) return;
+            await updateAgentStatus(agentId, 'rejected');
+        }
+
+        async function updateAgentStatus(agentId, status) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/admin/agent-status/${agentId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token
+                    },
+                    body: JSON.stringify({ status })
+                });
+                if (res.ok) {
+                    document.getElementById('adminActionsMsg').textContent = `Agent ${status}.`;
+                    loadPendingAgents();
+                } else {
+                    document.getElementById('adminActionsMsg').textContent = 'Failed to update agent status.';
+                }
+            } catch {
+                document.getElementById('adminActionsMsg').textContent = 'Error updating agent status.';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
