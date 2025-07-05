@@ -62,34 +62,31 @@ async function register(event) {
     }
 
     try {
-        const response = await fetch(`${backendUrl}/api/register`, { // Use backendUrl constant
+        const response = await fetch(`${backendUrl}/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            // --- MODIFIED: Ensure keys match backend's expected `req.body` properties ---
             body: JSON.stringify({
-                fullName: name, // Matches backend: req.body.fullName
-                emailAddress: email, // Matches backend: req.body.emailAddress
-                phoneNumber: phone,   // Matches backend: req.body.body.phoneNumber
+                fullName: name,
+                emailAddress: email,
+                phoneNumber: phone,
                 password: password,
-                userRole: role      // Matches backend: req.body.userRole
+                userRole: role
             }),
         });
-
         const data = await response.json();
-
         if (response.ok) {
-            // --- MODIFIED: Store token and user data received from the backend ---
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: data.user.id,
-                name: data.user.name,
-                email: data.user.email,
-                role: data.user.role
-            }));
-            showNotification('Registration successful! You are now logged in.', 'success');
-            window.location.href = 'index.html'; // Redirect directly to the dashboard
+            showNotification('Registration successful! Please check your email for the confirmation code.', 'success');
+            // Optionally show the Ethereal preview link for demo
+            if (data.etherealPreview) {
+                setTimeout(() => {
+                    window.open(data.etherealPreview, '_blank');
+                }, 1000);
+            }
+            setTimeout(() => {
+                window.location.href = 'verify-code.html';
+            }, 2000);
         } else {
             showNotification(`Registration failed: ${data.message || 'Something went wrong.'}`, 'error');
         }
@@ -112,19 +109,16 @@ async function login(event) {
     }
 
     try {
-        const response = await fetch(`${backendUrl}/api/login`, { // Use backendUrl constant
+        const response = await fetch(`${backendUrl}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
         });
-
         const data = await response.json();
-
         if (response.ok) {
             localStorage.setItem('token', data.token);
-            // Store specific user details from the backend response
             localStorage.setItem('user', JSON.stringify({
                 id: data.user.id,
                 name: data.user.name,
@@ -132,9 +126,13 @@ async function login(event) {
                 role: data.user.role
             }));
             showNotification('Login successful! Welcome back.', 'success');
-            window.location.href = 'index.html'; // Redirect to home page or dashboard
+            window.location.href = 'index.html';
         } else {
-            showNotification(`Login failed: ${data.message || 'Invalid credentials.'}`, 'error');
+            if (data.message && data.message.includes('verify')) {
+                showNotification('Please verify your email before logging in. Check your inbox.', 'error');
+            } else {
+                showNotification(`Login failed: ${data.message || 'Invalid credentials.'}`, 'error');
+            }
         }
     } catch (error) {
         console.error('Error during login:', error);

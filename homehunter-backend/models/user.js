@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
     password: { type: String, required: true, select: false },
-    role: { type: String, enum: ['tenant', 'agent'], default: 'tenant' }
+    role: { type: String, enum: ['tenant', 'agent'], default: 'tenant' },
+    isVerified: { type: Boolean, default: false },
+    verificationCode: { type: String },
+    verificationCodeExpires: { type: Date }
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

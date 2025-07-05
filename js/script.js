@@ -221,3 +221,30 @@ async function generateRecommendations() {
         showNotification('An error occurred while getting recommendations', 'error');
     }
 }
+
+// --- Notification Utility ---
+function showNotification(message, type = 'info') {
+    let notif = document.getElementById('globalNotification');
+    if (!notif) {
+        notif = document.createElement('div');
+        notif.id = 'globalNotification';
+        notif.style.position = 'fixed';
+        notif.style.top = '30px';
+        notif.style.left = '50%';
+        notif.style.transform = 'translateX(-50%)';
+        notif.style.zIndex = '9999';
+        notif.style.padding = '16px 32px';
+        notif.style.borderRadius = '8px';
+        notif.style.fontSize = '1.1rem';
+        notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        notif.style.color = '#fff';
+        notif.style.display = 'none';
+        document.body.appendChild(notif);
+    }
+    notif.textContent = message;
+    notif.style.backgroundColor = type === 'success' ? '#38a169' : (type === 'error' ? '#e53e3e' : '#3182ce');
+    notif.style.display = 'block';
+    setTimeout(() => {
+        notif.style.display = 'none';
+    }, 3500);
+}

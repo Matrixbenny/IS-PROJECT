@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <h2>Email Verification</h2>
+        <div id="verificationMessage">Verifying your email, please wait...</div>
+        <a href="login.html" class="btn-auth" id="loginLink" style="display:none;">Go to Login</a>
+    </div>
+    <script>
+        // Get token from URL
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        const messageDiv = document.getElementById('verificationMessage');
+        const loginLink = document.getElementById('loginLink');
+        if (!token) {
+            messageDiv.textContent = 'Invalid verification link.';
+        } else {
+            fetch('http://localhost:5000/api/verify-email?token=' + token)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message && data.message.includes('success')) {
+                        messageDiv.textContent = 'Your email has been verified! You can now log in.';
+                        loginLink.style.display = 'inline-block';
+                    } else {
+                        messageDiv.textContent = data.message || 'Verification failed.';
+                    }
+                })
+                .catch(() => {
+                    messageDiv.textContent = 'Verification failed. Please try again later.';
+                });
+        }
+    </script>
+</body>
+</html>

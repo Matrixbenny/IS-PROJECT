@@ -3,9 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fetch = require('node-fetch'); // For calling Flask AI API
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 // --- Import Models ---
 const User = require('./models/User');
@@ -49,62 +52,70 @@ const auth = (req, res, next) => {
 
 // --- Register ---
 app.post('/api/register', async (req, res) => {
-    // MODIFIED: Destructure body to match frontend's auth.js data structure
     const { fullName, emailAddress, phoneNumber, password, userRole } = req.body;
-
-    // Basic validation
     if (!fullName || !emailAddress || !phoneNumber || !password || !userRole) {
         return res.status(400).json({ message: 'Please enter all fields.' });
     }
-
     try {
-        let user = await User.findOne({ email: emailAddress }); // Check using emailAddress
+        let user = await User.findOne({ email: emailAddress });
         if (user) {
             return res.status(400).json({ message: 'User with that email already exists.' });
         }
-
-        // Create new user instance, mapping frontend names to backend model names
+        // Generate 6-digit confirmation code
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const codeExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
         const newUser = new User({
-            name: fullName,       // Frontend fullName maps to backend name
-            email: emailAddress, // Frontend emailAddress maps to backend email
-            phone: phoneNumber,   // Frontend phoneNumber maps to backend phone
-            password: password,   // Password hashing handled by pre('save') hook in models/User.js
-            role: userRole        // Frontend userRole maps to backend role
+            name: fullName,
+            email: emailAddress,
+            phone: phoneNumber,
+            password: password,
+            role: userRole,
+            isVerified: false,
+            verificationCode,
+            verificationCodeExpires: codeExpires
         });
-
         await newUser.save();
-
-        // After successful registration, generate a token and send it back
-        const payload = {
-            user: {
-                id: newUser._id,
-                role: newUser.role
+        // Send code via Gmail SMTP
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
-        };
-
-        jwt.sign(
-            payload,
-            JWT_SECRET,
-            { expiresIn: '1h' }, // Token expires in 1 hour
-            (err, token) => {
-                if (err) throw err;
-                // Send token and specific user details back to the frontend
-                res.status(201).json({
-                    message: 'Registration successful and automatically logged in!',
-                    token,
-                    user: {
-                        id: newUser._id,
-                        name: newUser.name,
-                        email: newUser.email,
-                        role: newUser.role
-                    }
-                });
-            }
-        );
-
+        });
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: newUser.email,
+            subject: 'Your HomeHunter Kenya Confirmation Code',
+            html: `<p>Your confirmation code is: <b>${verificationCode}</b></p><p>This code will expire in 15 minutes.</p>`
+        });
+        res.status(201).json({
+            message: 'Registration successful! Please check your email for the confirmation code.'
+        });
     } catch (err) {
         console.error('Registration error:', err.message);
         res.status(500).json({ message: 'Registration error', error: err.message });
+    }
+});
+
+
+// --- Confirmation Code Verification Endpoint ---
+app.post('/api/verify-code', async (req, res) => {
+    const { email, code } = req.body;
+    if (!email || !code) return res.status(400).json({ message: 'Email and code are required.' });
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: 'User not found.' });
+        if (user.isVerified) return res.status(400).json({ message: 'User already verified.' });
+        if (user.verificationCode !== code) return res.status(400).json({ message: 'Invalid confirmation code.' });
+        if (user.verificationCodeExpires < new Date()) return res.status(400).json({ message: 'Confirmation code expired.' });
+        user.isVerified = true;
+        user.verificationCode = undefined;
+        user.verificationCodeExpires = undefined;
+        await user.save();
+        res.json({ message: 'Account verified successfully! You can now log in.' });
+    } catch (err) {
+        res.status(500).json({ message: 'Verification error', error: err.message });
     }
 });
 
@@ -116,7 +127,9 @@ app.post('/api/login', async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-
+        if (!user.isVerified) {
+            return res.status(403).json({ message: 'Please verify your email before logging in.' });
+        }
         const token = jwt.sign({ user: { id: user._id, role: user.role } }, JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {

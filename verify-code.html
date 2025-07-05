@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Confirmation Code - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <h2>Enter Confirmation Code</h2>
+        <p>A 6-digit code was sent to your email. Enter it below to verify your account.</p>
+        <form id="codeForm">
+            <div class="form-group">
+                <label for="verifyEmail">Email Address</label>
+                <input type="email" id="verifyEmail" name="verifyEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="verifyCode">Confirmation Code</label>
+                <input type="text" id="verifyCode" name="verifyCode" maxlength="6" required>
+            </div>
+            <button type="submit" class="btn-auth">Verify Account</button>
+        </form>
+        <div id="verifyMessage" style="margin-top:1em;"></div>
+        <a href="login.html" class="btn-auth" id="loginLink" style="display:none;">Go to Login</a>
+    </div>
+    <script>
+        document.getElementById('codeForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('verifyEmail').value;
+            const code = document.getElementById('verifyCode').value;
+            const msg = document.getElementById('verifyMessage');
+            const loginLink = document.getElementById('loginLink');
+            msg.textContent = 'Verifying...';
+            try {
+                const res = await fetch('http://localhost:5000/api/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    msg.textContent = 'Account verified! You can now log in.';
+                    loginLink.style.display = 'inline-block';
+                } else {
+                    msg.textContent = data.message || 'Verification failed.';
+                }
+            } catch (err) {
+                msg.textContent = 'Verification failed. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
