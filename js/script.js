@@ -8,14 +8,16 @@ document.addEventListener('DOMContentLoaded', async function () {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
 
-    // Check if user is logged in and display relevant elements
-    if (token && user) {
-        document.getElementById('loggedInNav').style.display = 'flex';
-        document.getElementById('loggedOutNav').style.display = 'none';
-        document.getElementById('userNameDisplay').textContent = user.name;
-    } else {
-        document.getElementById('loggedInNav').style.display = 'none';
-        document.getElementById('loggedOutNav').style.display = 'flex';
+    // Navigation logic (optional, can be customized)
+    if (document.getElementById('loggedInNav') && document.getElementById('loggedOutNav')) {
+        if (token && user) {
+            document.getElementById('loggedInNav').style.display = 'flex';
+            document.getElementById('loggedOutNav').style.display = 'none';
+            document.getElementById('userNameDisplay').textContent = user.name;
+        } else {
+            document.getElementById('loggedInNav').style.display = 'none';
+            document.getElementById('loggedOutNav').style.display = 'flex';
+        }
     }
 
     try {
@@ -37,6 +39,35 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (propertyId) {
             fetchPropertyDetails(propertyId);
         }
+    }
+
+    // --- Property Search Filter Logic ---
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const location = document.getElementById('location').value.trim().toLowerCase();
+            const propertyType = document.getElementById('propertyType').value;
+            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value) || Number.MAX_SAFE_INTEGER;
+
+            // Add more filters if needed (e.g., bedrooms, bathrooms)
+
+            const filtered = allProperties.filter(p => {
+                let match = true;
+                if (location && !p.location.toLowerCase().includes(location)) match = false;
+                if (propertyType && p.type !== propertyType) match = false;
+                if (p.price < minPrice || p.price > maxPrice) match = false;
+                // Add more filter checks here
+                return match;
+            });
+            displayProperties(filtered);
+            // Optionally show a count or message
+            const countMsg = document.getElementById('searchCountMsg');
+            if (countMsg) {
+                countMsg.textContent = `${filtered.length} properties found.`;
+            }
+        });
     }
 });
 
