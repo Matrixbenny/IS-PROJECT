@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agent Waiting Room - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .waiting-room-container {
+            max-width: 420px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            padding: 36px 32px 28px 32px;
+            text-align: center;
+        }
+        .waiting-room-container h1 {
+            color: #5a189a;
+            margin-bottom: 18px;
+            font-size: 2rem;
+        }
+        .waiting-room-container p {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+        .warm-emoji {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+        .login-section {
+            margin-top: 36px;
+            background: #f7f3ff;
+            border-radius: 12px;
+            padding: 24px 18px 18px 18px;
+            box-shadow: 0 2px 8px #b197fc33;
+        }
+        .login-section h2 {
+            color: #4c2885;
+            margin-bottom: 12px;
+        }
+        .login-form label {
+            display: block;
+            text-align: left;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #5a189a;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 14px;
+            border-radius: 6px;
+            border: 1px solid #b197fc;
+            font-size: 1rem;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(90deg, #7b2ff2 0%, #f357a8 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-form button:hover {
+            background: linear-gradient(90deg, #f357a8 0%, #7b2ff2 100%);
+        }
+        .otp-info {
+            font-size: 0.97rem;
+            color: #7b2ff2;
+            margin-bottom: 10px;
+        }
+        .success-msg {
+            color: #388e3c;
+            margin-bottom: 10px;
+        }
+        .error-msg {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="waiting-room-container">
+        <div class="warm-emoji">😊🏡</div>
+        <h1>Thank You for Submitting Your Details!</h1>
+        <p>
+            Your agent profile has been <b>successfully sent</b> and is now <b>undergoing verification</b> by our admin team.<br>
+            <br>
+            <b>If approved, you will receive an email with your One-Time Password (OTP) for login.</b><br>
+            Please check your email regularly.<br>
+            <br>
+            <i>We appreciate your patience and welcome you to the HomeHunter family!</i>
+        </p>
+
+        <div class="login-section">
+            <h2>Agent Login</h2>
+            <div class="otp-info">Enter your username, email, and the OTP sent to your email to log in.</div>
+            <form class="login-form" id="agentLoginForm" autocomplete="off">
+                <label for="loginUsername">Username</label>
+                <input type="text" id="loginUsername" name="username" required>
+
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" required>
+
+                <label for="loginOtp">OTP</label>
+                <input type="text" id="loginOtp" name="otp" maxlength="6" required>
+
+                <button type="submit">Login</button>
+                <div class="success-msg" id="loginSuccess" style="display:none;"></div>
+                <div class="error-msg" id="loginError" style="display:none;"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Example: Login form handler (replace with your backend API)
+        document.getElementById('agentLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const email = document.getElementById('loginEmail').value.trim();
+            const otp = document.getElementById('loginOtp').value.trim();
+
+            // Send login request to backend
+            try {
+                const res = await fetch('http://localhost:5000/api/agents/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, otp })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    document.getElementById('loginSuccess').textContent = "Login successful! Redirecting...";
+                    document.getElementById('loginSuccess').style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = 'agents-approved.html';
+                    }, 1200);
+                } else {
+                    document.getElementById('loginError').textContent = data.message || "Invalid OTP or credentials.";
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('loginError').textContent = "Network error. Please try again.";
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+    </script>
