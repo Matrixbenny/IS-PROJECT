@@ -340,5 +340,15 @@ app.post('/api/agents/profile', upload.fields([
     }
 });
 
+// Get all pending agents for admin
+app.get('/api/admin/pending-agents', async (req, res) => {
+    try {
+        const agents = await Agent.find({ status: 'pending' }).sort({ createdAt: -1 });
+        res.json(agents);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching agents.' });
+    }
+});
+
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

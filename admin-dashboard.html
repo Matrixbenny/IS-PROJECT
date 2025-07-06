@@ -206,10 +206,7 @@
                         <th>License</th>
                         <th>ID/Passport</th>
                         <th>Agency</th>
-                        <th>Bio</th>
-                        <th>ID Photo</th>
-                        <th>Passport Photo</th>
-                        <th>Certificate</th>
+                        <th>KRA PIN</th>
                         <th>Date Registered</th>
                         <th>Action</th>
                     </tr>
@@ -256,19 +253,19 @@
         // Fetch pending agents from backend API
         async function loadPendingAgents() {
             const tableBody = document.querySelector('#pendingAgentsTable tbody');
-            tableBody.innerHTML = '<tr><td colspan="12">Loading...</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
             try {
                 const res = await fetch('http://localhost:5000/api/admin/pending-agents', {
                     headers: { 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token }
                 });
                 allAgents = await res.json();
                 if (!allAgents.length) {
-                    tableBody.innerHTML = '<tr><td colspan="12">No pending agents.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="9">No pending agents.</td></tr>';
                     return;
                 }
                 renderAgents(allAgents);
             } catch (err) {
-                tableBody.innerHTML = '<tr><td colspan="12">Error loading agents.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9">Error loading agents.</td></tr>';
             }
         }
 
@@ -284,10 +281,7 @@
                     <td data-label="License">${agent.license || '-'}</td>
                     <td data-label="ID/Passport">${agent.idNumber || '-'}</td>
                     <td data-label="Agency">${agent.agency || '-'}</td>
-                    <td data-label="Bio">${agent.bio ? `<span title="${agent.bio}">${agent.bio.slice(0, 30)}${agent.bio.length > 30 ? '...' : ''}</span>` : '-'}</td>
-                    <td data-label="ID Photo">${agent.idPhotoUrl ? `<a href="${agent.idPhotoUrl}" target="_blank">View</a>` : '-'}</td>
-                    <td data-label="Passport Photo">${agent.passportPhotoUrl ? `<a href="${agent.passportPhotoUrl}" target="_blank">View</a>` : '-'}</td>
-                    <td data-label="Certificate">${agent.certificatePhotoUrl ? `<a href="${agent.certificatePhotoUrl}" target="_blank">View</a>` : '-'}</td>
+                    <td data-label="KRA PIN">${agent.kraPin || '-'}</td>
                     <td data-label="Date Registered">${agent.createdAt ? new Date(agent.createdAt).toLocaleDateString() : '-'}</td>
                     <td data-label="Action">
                         <button class="action-btn approve" onclick="approveAgent('${agent._id}')"><i class="fas fa-check"></i> Approve</button>
