@@ -4,46 +4,212 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard - HomeHunter Kenya</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .admin-section { max-width: 800px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 32px; box-shadow: 0 2px 8px #0001; }
-        .admin-section h1 { text-align: center; margin-bottom: 24px; }
-        .pending-agents-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
-        .pending-agents-table th, .pending-agents-table td { border: 1px solid #eee; padding: 10px; text-align: left; }
-        .pending-agents-table th { background: #f5f5f5; }
-        .action-btn { padding: 6px 14px; border: none; border-radius: 5px; cursor: pointer; }
-        .approve { background: #4caf50; color: #fff; }
-        .reject { background: #f44336; color: #fff; }
-        .logout-btn { float: right; }
+        body {
+            background: #f4f6fb;
+        }
+        .admin-section {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 32px 32px 32px;
+            box-shadow: 0 4px 24px #0002;
+        }
+        .admin-section h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 2.2rem;
+            color: #3a3a6a;
+            letter-spacing: 1px;
+        }
+        .admin-section h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+        .pending-agents-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 32px;
+            background: #fafbff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #0001;
+        }
+        .pending-agents-table th, .pending-agents-table td {
+            border-bottom: 1px solid #eee;
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 0.97rem;
+        }
+        .pending-agents-table th {
+            background: #f5f7fa;
+            color: #4a4a7a;
+            font-weight: 700;
+        }
+        .pending-agents-table tr:last-child td {
+            border-bottom: none;
+        }
+        .action-btn {
+            padding: 7px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 2px 0;
+            transition: background 0.2s;
+        }
+        .approve {
+            background: #4caf50;
+            color: #fff;
+        }
+        .approve:hover {
+            background: #388e3c;
+        }
+        .reject {
+            background: #f44336;
+            color: #fff;
+        }
+        .reject:hover {
+            background: #b71c1c;
+        }
+        .logout-btn {
+            float: right;
+            background: #e0e7ff;
+            color: #3a3a6a;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 18px;
+            font-weight: 600;
+            margin-left: 16px;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: #c7d2fe;
+        }
+        #agentSearch {
+            width: 100%;
+            margin-bottom: 18px;
+            padding: 10px 14px;
+            border-radius: 7px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            background: #f8fafc;
+            box-sizing: border-box;
+        }
+        #adminActionsMsg {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            color: #3a3a6a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        @media (max-width: 900px) {
+            .admin-section {
+                padding: 18px 4px;
+            }
+            .pending-agents-table th, .pending-agents-table td {
+                font-size: 0.9rem;
+                padding: 8px 4px;
+            }
+        }
+        @media (max-width: 600px) {
+            .pending-agents-table, .pending-agents-table thead, .pending-agents-table tbody, .pending-agents-table th, .pending-agents-table td, .pending-agents-table tr {
+                display: block;
+            }
+            .pending-agents-table thead {
+                display: none;
+            }
+            .pending-agents-table tr {
+                margin-bottom: 18px;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 1px 4px #0001;
+                padding: 8px;
+            }
+            .pending-agents-table td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                min-height: 32px;
+            }
+            .pending-agents-table td:before {
+                position: absolute;
+                left: 12px;
+                top: 12px;
+                width: 45%;
+                white-space: nowrap;
+                font-weight: bold;
+                color: #667eea;
+                content: attr(data-label);
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="container">
+        <nav class="container" style="display:flex;align-items:center;justify-content:space-between;padding:18px 0;">
             <div class="logo">
                 <i class="fas fa-home"></i>
                 HomeHunter Kenya
             </div>
             <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="properties.html">Properties</a></li>
-                <li><a href="map-view.html">Map View</a></li>
-                <li><a href="about.html">About</a></li>
-                <!-- Add this in your navigation, but only show if user is admin -->
-                <li id="adminDashboardLink" style="display:none;"><a href="admin-dashboard.html">Admin Dashboard</a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="properties.html"><i class="fas fa-building"></i> Properties</a></li>
+                <li><a href="map-view.html"><i class="fas fa-map"></i> Map View</a></li>
+                <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                <li id="adminDashboardLink" style="display:none;"><a href="admin-dashboard.html"><i class="fas fa-user-shield"></i> Admin Dashboard</a></li>
             </ul>
-            <button class="btn btn-secondary logout-btn" onclick="logout()">Logout</button>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
     </header>
 
     <main>
         <section class="admin-section">
-            <h1>Admin Dashboard</h1>
-            <h2>Pending Agent Approvals</h2>
+            <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+            <h2><i class="fas fa-user-clock"></i> Pending Agent Approvals</h2>
+            <input type="text" id="agentSearch" placeholder="🔍 Search agents by name, email, or phone...">
             <table class="pending-agents-table" id="pendingAgentsTable">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
+                        <th>License</th>
+                        <th>ID/Passport</th>
+                        <th>Agency</th>
+                        <th>Bio</th>
+                        <th>ID Photo</th>
+                        <th>Passport Photo</th>
+                        <th>Certificate</th>
                         <th>Date Registered</th>
                         <th>Action</th>
                     </tr>
@@ -57,7 +223,7 @@
     </main>
 
     <footer>
-        <div class="container">
+        <div class="container" style="text-align:center;padding:18px 0;color:#888;">
             <p>&copy; 2025 HomeHunter Kenya. All rights reserved.</p>
         </div>
     </footer>
@@ -82,39 +248,64 @@
             }
             document.getElementById('adminDashboardLink').style.display = 'block';
             loadPendingAgents();
+            document.getElementById('agentSearch').addEventListener('input', filterAgents);
         });
 
-        // Example: Fetch pending agents from backend API
+        let allAgents = [];
+
+        // Fetch pending agents from backend API
         async function loadPendingAgents() {
             const tableBody = document.querySelector('#pendingAgentsTable tbody');
-            tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="12">Loading...</td></tr>';
             try {
-                // Replace with your backend API endpoint
                 const res = await fetch('http://localhost:5000/api/admin/pending-agents', {
                     headers: { 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token }
                 });
-                const agents = await res.json();
-                if (!agents.length) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No pending agents.</td></tr>';
+                allAgents = await res.json();
+                if (!allAgents.length) {
+                    tableBody.innerHTML = '<tr><td colspan="12">No pending agents.</td></tr>';
                     return;
                 }
-                tableBody.innerHTML = '';
-                agents.forEach(agent => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${agent.name}</td>
-                        <td>${agent.email}</td>
-                        <td>${new Date(agent.createdAt).toLocaleDateString()}</td>
-                        <td>
-                            <button class="action-btn approve" onclick="approveAgent('${agent._id}')">Approve</button>
-                            <button class="action-btn reject" onclick="rejectAgent('${agent._id}')">Reject</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
+                renderAgents(allAgents);
             } catch (err) {
-                tableBody.innerHTML = '<tr><td colspan="4">Error loading agents.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="12">Error loading agents.</td></tr>';
             }
+        }
+
+        function renderAgents(agents) {
+            const tableBody = document.querySelector('#pendingAgentsTable tbody');
+            tableBody.innerHTML = '';
+            agents.forEach(agent => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td data-label="Name">${agent.fullName || agent.name || '-'}</td>
+                    <td data-label="Email">${agent.email || '-'}</td>
+                    <td data-label="Phone">${agent.phone || '-'}</td>
+                    <td data-label="License">${agent.license || '-'}</td>
+                    <td data-label="ID/Passport">${agent.idNumber || '-'}</td>
+                    <td data-label="Agency">${agent.agency || '-'}</td>
+                    <td data-label="Bio">${agent.bio ? `<span title="${agent.bio}">${agent.bio.slice(0, 30)}${agent.bio.length > 30 ? '...' : ''}</span>` : '-'}</td>
+                    <td data-label="ID Photo">${agent.idPhotoUrl ? `<a href="${agent.idPhotoUrl}" target="_blank">View</a>` : '-'}</td>
+                    <td data-label="Passport Photo">${agent.passportPhotoUrl ? `<a href="${agent.passportPhotoUrl}" target="_blank">View</a>` : '-'}</td>
+                    <td data-label="Certificate">${agent.certificatePhotoUrl ? `<a href="${agent.certificatePhotoUrl}" target="_blank">View</a>` : '-'}</td>
+                    <td data-label="Date Registered">${agent.createdAt ? new Date(agent.createdAt).toLocaleDateString() : '-'}</td>
+                    <td data-label="Action">
+                        <button class="action-btn approve" onclick="approveAgent('${agent._id}')"><i class="fas fa-check"></i> Approve</button>
+                        <button class="action-btn reject" onclick="rejectAgent('${agent._id}')"><i class="fas fa-times"></i> Reject</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function filterAgents() {
+            const q = document.getElementById('agentSearch').value.toLowerCase();
+            const filtered = allAgents.filter(agent =>
+                (agent.fullName || '').toLowerCase().includes(q) ||
+                (agent.email || '').toLowerCase().includes(q) ||
+                (agent.phone || '').toLowerCase().includes(q)
+            );
+            renderAgents(filtered);
         }
 
         async function approveAgent(agentId) {
