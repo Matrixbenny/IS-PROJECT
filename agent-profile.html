@@ -10,6 +10,7 @@
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
         .form-group input, .form-group textarea { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        .form-group input[type="file"] { padding: 3px; }
         .btn { padding: 10px 24px; border: none; border-radius: 5px; background: #667eea; color: #fff; cursor: pointer; }
         .pending-msg { color: #d32f2f; text-align: center; margin-top: 20px; }
     </style>
@@ -18,7 +19,7 @@
     <main>
         <section class="agent-profile-section">
             <h1>Agent Profile Setup</h1>
-            <form id="agentProfileForm">
+            <form id="agentProfileForm" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="fullName">Full Name <span class="required">*</span></label>
                     <input type="text" id="fullName" name="fullName" required>
@@ -43,6 +44,18 @@
                     <label for="bio">Short Bio</label>
                     <textarea id="bio" name="bio"></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="idPhoto">Upload National ID/Passport Photo <span class="required">*</span></label>
+                    <input type="file" id="idPhoto" name="idPhoto" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="passportPhoto">Upload Passport-size Photo <span class="required">*</span></label>
+                    <input type="file" id="passportPhoto" name="passportPhoto" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="certificatePhoto">Upload Professional Certificate (if any)</label>
+                    <input type="file" id="certificatePhoto" name="certificatePhoto" accept="image/*,application/pdf">
+                </div>
                 <button type="submit" class="btn">Submit for Approval</button>
             </form>
             <div class="pending-msg" id="pendingMsg" style="display:none;">
@@ -51,45 +64,22 @@
         </section>
     </main>
     <script>
-        // Redirect non-agents away
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user || user.role !== 'agent') {
-                window.location.href = 'index.html';
-                return;
-            }
-            if (user.status === 'pending') {
-                document.getElementById('agentProfileForm').style.display = 'none';
-                document.getElementById('pendingMsg').style.display = 'block';
-            }
-        });
-
         document.getElementById('agentProfileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
-            // Collect form data
-            const data = {
-                fullName: document.getElementById('fullName').value,
-                phone: document.getElementById('phone').value,
-                license: document.getElementById('license').value,
-                idNumber: document.getElementById('idNumber').value,
-                agency: document.getElementById('agency').value,
-                bio: document.getElementById('bio').value,
-            };
+            const form = document.getElementById('agentProfileForm');
+            const formData = new FormData(form);
+
             // Send to backend for admin approval (replace URL with your API endpoint)
-            const user = JSON.parse(localStorage.getItem('user'));
-            await fetch('http://localhost:5000/api/agents/profile', {
+            const res = await fetch('http://localhost:5000/api/agents/profile', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + user.token
-                },
-                body: JSON.stringify(data)
+                body: formData
             });
-            // Set status to pending in localStorage
-            user.status = 'pending';
-            localStorage.setItem('user', JSON.stringify(user));
-            document.getElementById('agentProfileForm').style.display = 'none';
-            document.getElementById('pendingMsg').style.display = 'block';
+            if (res.ok) {
+                form.style.display = 'none';
+                document.getElementById('pendingMsg').style.display = 'block';
+            } else {
+                alert('There was an error submitting your details. Please try again.');
+            }
         });
     </script>
 </body>
