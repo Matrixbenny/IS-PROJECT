@@ -122,34 +122,24 @@
         // Example: Login form handler (replace with your backend API)
         document.getElementById('agentLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('loginSuccess').style.display = 'none';
-
-            const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
             const otp = document.getElementById('otp').value.trim();
 
-            // Send login request to backend
             try {
                 const res = await fetch('http://localhost:5000/api/agents/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, otp })
+                    body: JSON.stringify({ email, otp })
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    document.getElementById('loginSuccess').textContent = "Login successful! Redirecting...";
-                    document.getElementById('loginSuccess').style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = 'agents-approved.html';
-                    }, 1200);
+                    alert(data.message); // Show success message
+                    window.location.href = 'agents-approved.html'; // Redirect to agents-approved.html
                 } else {
-                    document.getElementById('loginError').textContent = data.message || "Invalid OTP or credentials.";
-                    document.getElementById('loginError').style.display = 'block';
+                    alert(data.message || "Invalid OTP or credentials.");
                 }
             } catch (err) {
-                document.getElementById('loginError').textContent = "Network error. Please try again.";
-                document.getElementById('loginError').style.display = 'block';
+                alert("Network error. Please try again.");
             }
         });
 
