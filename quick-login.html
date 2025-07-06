@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Login Setup</title>
+    <title>Agent Login - Welcome</title>
     <style>
         body {
-            background-color: #121212;
+            background-color: #0b3d0b; /* Dark green jungle vibe */
             color: #e0e0e0;
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -14,23 +14,35 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-image: url('https://source.unsplash.com/1600x900/?nature'); /* Nature background */
+            background-size: cover;
+            background-position: center;
         }
         .login-container {
-            background-color: #1e1e1e;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             text-align: center;
+            width: 90%;
+            max-width: 400px;
         }
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 20px;
             color: #f5f5f5;
+            font-family: 'Georgia', serif; /* Poetic font */
+        }
+        p {
+            font-size: 16px;
+            color: #bdbdbd;
+            margin-bottom: 20px;
         }
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
+            color: #a8d5a8; /* Soft green */
         }
         input {
             width: 100%;
@@ -57,34 +69,36 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Quick Login Setup</h1>
-        <form id="quickLoginForm">
+        <h1>Welcome</h1>
+        <p>Join the HomeHunter Agents family and explore the opportunities ahead.</p>
+        <form id="agentLoginForm">
             <label for="email">Email Address</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <label for="password">New Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your new password" required>
-            <button type="submit">Submit</button>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <button type="submit">Login</button>
         </form>
     </div>
     <script>
-        document.getElementById('quickLoginForm').addEventListener('submit', async function(event) {
+        document.getElementById('agentLoginForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
             try {
-                const res = await fetch('http://localhost:5000/api/agents/save-login-details', {
+                const res = await fetch('http://localhost:5000/api/agents/authenticate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
-                if (res.ok) {
-                    alert('Login details saved successfully!');
-                    window.location.href = 'quick-login.html'; // Redirect to the quick-login.html page
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('Login successful! Redirecting...');
+                    localStorage.setItem('agentData', JSON.stringify(data.agent)); // Store agent data in localStorage
+                    window.location.href = 'agents-main.html'; // Redirect to the main agent's page
                 } else {
-                    const error = await res.json();
-                    alert(error.message || 'Error saving login details.');
+                    alert(data.message || 'Invalid email or password.');
                 }
             } catch (err) {
                 alert('Network error. Please try again.');

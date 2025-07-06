@@ -19,6 +19,7 @@ const Property = require('./models/Property');
 const Favorite = require('./models/Favorite');
 const SearchHistory = require('./models/SearchHistory');
 const UserPreferences = require('./models/UserPreferences');
+const ApprovedAgent = require('./models/approved-agents'); // Import the model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -437,6 +438,45 @@ app.post('/api/agents/login', async (req, res) => {
         res.status(200).json({ success: true, message: 'Login successful!' });
     } catch (err) {
         console.error('Error during agent login:', err.message);
+        res.status(500).json({ message: 'Network error. Please try again.', error: err.message });
+    }
+});
+
+// --- Save Login Details for Approved Agents ---
+app.post('/api/agents/save-login-details', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Hash the password before saving (use bcrypt or similar library)
+        const hashedPassword = password; // Replace with hashed password logic
+
+        const newAgent = new ApprovedAgent({ email, password: hashedPassword });
+        await newAgent.save();
+
+        res.status(201).json({ message: 'Login details saved successfully!' });
+    } catch (err) {
+        console.error('Error saving login details:', err.message);
+        res.status(500).json({ message: 'Error saving login details.', error: err.message });
+    }
+});
+
+// --- Agent Authentication ---
+app.post('/api/agents/authenticate', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const agent = await ApprovedAgent.findOne({ email });
+        if (!agent || agent.password !== password) { // Replace with hashed password comparison
+            return res.status(400).json({ message: 'Invalid email or password.' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Login successful!',
+            agent: { email: agent.email } // Return agent data for the profile card
+        });
+    } catch (err) {
+        console.error('Error during authentication:', err.message);
         res.status(500).json({ message: 'Network error. Please try again.', error: err.message });
     }
 });
