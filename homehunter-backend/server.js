@@ -13,6 +13,25 @@ const Agent = require('./models/agent');
 const multer = require('multer');
 const path = require('path');
 
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/properties/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
+
+// Ensure uploads/properties directory exists
+const fs = require('fs');
+const uploadDir = 'uploads/properties';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // --- Import Models ---
 const User = require('./models/User');
 const Property = require('./models/Property');
@@ -20,29 +39,11 @@ const Favorite = require('./models/Favorite');
 const SearchHistory = require('./models/SearchHistory');
 const UserPreferences = require('./models/UserPreferences');
 const ApprovedAgent = require('./models/approved-agents'); // Import the model
+const Message = require('./models/Message'); // Import Message model for analytics
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey';
-
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/agents/');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.fieldname + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage: storage });
-
-// Ensure uploads/agents directory exists
-const fs = require('fs');
-const uploadDir = 'uploads/agents';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
 
 // --- Connect to MongoDB ---
 mongoose.connect(process.env.MONGODB_URI, {
@@ -478,6 +479,26 @@ app.post('/api/agents/authenticate', async (req, res) => {
     } catch (err) {
         console.error('Error during authentication:', err.message);
         res.status(500).json({ message: 'Network error. Please try again.', error: err.message });
+    }
+});
+
+// --- Analytics View (Admin) ---
+app.get('/api/analytics/view', async (req, res) => {
+    try {
+        const totalProperties = await Property.countDocuments();
+        const totalMessages = await Message.countDocuments(); // Assuming a Message model exists
+        const averagePrice = await Property.aggregate([
+            { $group: { _id: null, averagePrice: { $avg: '$price' } } }
+        ]);
+
+        res.status(200).json({
+            totalProperties,
+            totalMessages,
+            averagePrice: averagePrice[0]?.averagePrice || 0
+        });
+    } catch (err) {
+        console.error('Error fetching analytics:', err.message);
+        res.status(500).json({ message: 'Failed to fetch analytics.', error: err.message });
     }
 });
 
