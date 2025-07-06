@@ -55,6 +55,21 @@
         .profile-card button:hover {
             background-color: #45a049;
         }
+        .logout-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4c4c; /* Sexy red color */
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .logout-button:hover {
+            background-color: #e43e3e; /* Darker red on hover */
+            transform: scale(1.05); /* Slight zoom effect */
+        }
         .workstation {
             display: flex;
             flex-wrap: wrap;
@@ -148,6 +163,7 @@
             <h2>Agent Profile</h2>
             <p>Email: <span id="agentEmail"></span></p>
             <button onclick="openProfileModal()">Update Profile</button>
+            <button class="logout-button" onclick="logout()">Logout</button>
         </div>
         <div class="workstation">
             <div class="workstation-section">
@@ -193,7 +209,7 @@
         <button onclick="closeManagePropertiesModal()">Cancel</button>
     </div>
 
-    <!-- Add the View Analytics Modal -->
+    <!-- Modal for View Analytics -->
     <div class="modal-overlay" id="analyticsOverlay"></div>
     <div class="modal" id="analyticsModal">
         <h3>View Analytics</h3>
@@ -211,6 +227,13 @@
             document.getElementById('agentEmail').textContent = agentData.email;
         } else {
             alert('No agent data found. Redirecting to login...');
+            window.location.href = 'quick-login.html';
+        }
+
+        // Logout Functionality
+        function logout() {
+            localStorage.removeItem('agentData');
+            alert('You have been logged out.');
             window.location.href = 'quick-login.html';
         }
 
