@@ -75,8 +75,8 @@
                 body: formData
             });
             if (res.ok) {
-                form.style.display = 'none';
-                document.getElementById('pendingMsg').style.display = 'block';
+                // Redirect to waiting room page
+                window.location.href = 'agents-waitingroom.html';
             } else {
                 alert('There was an error submitting your details. Please try again.');
             }

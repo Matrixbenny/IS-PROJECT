@@ -9,6 +9,9 @@ const cors = require('cors');
 const fetch = require('node-fetch'); // For calling Flask AI API
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const Agent = require('./models/agent');
+const multer = require('multer');
+const path = require('path');
 
 // --- Import Models ---
 const User = require('./models/User');
@@ -21,6 +24,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey';
 
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/agents/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.fieldname + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
+
+// Ensure uploads/agents directory exists
+const fs = require('fs');
+const uploadDir = 'uploads/agents';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // --- Connect to MongoDB ---
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -31,6 +53,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // --- Middleware ---
 app.use(cors());
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
 // --- JWT Auth Middleware ---
 const auth = (req, res, next) => {
@@ -282,6 +305,38 @@ app.post('/api/recommendations', auth, async (req, res) => {
     } catch (err) {
         console.error('AI recommendation error:', err.message);
         res.status(500).json({ message: 'AI recommendation error', error: err.message });
+    }
+});
+
+// --- Agent Profile Submission ---
+app.post('/api/agents/profile', upload.fields([
+    { name: 'idPhoto', maxCount: 1 },
+    { name: 'passportPhoto', maxCount: 1 },
+    { name: 'certificatePhoto', maxCount: 1 }
+]), async (req, res) => {
+    try {
+        const { fullName, phone, license, idNumber, agency, bio } = req.body;
+        const idPhotoUrl = req.files['idPhoto'] ? `/uploads/agents/${req.files['idPhoto'][0].filename}` : '';
+        const passportPhotoUrl = req.files['passportPhoto'] ? `/uploads/agents/${req.files['passportPhoto'][0].filename}` : '';
+        const certificatePhotoUrl = req.files['certificatePhoto'] ? `/uploads/agents/${req.files['certificatePhoto'][0].filename}` : '';
+
+        const agent = new Agent({
+            fullName,
+            phone,
+            license,
+            idNumber,
+            agency,
+            bio,
+            idPhotoUrl,
+            passportPhotoUrl,
+            certificatePhotoUrl,
+            status: 'pending'
+        });
+        await agent.save();
+        res.status(201).json({ message: 'Agent profile submitted for approval.' });
+    } catch (err) {
+        console.error('Agent profile submission error:', err.message);
+        res.status(500).json({ message: 'Agent profile submission error', error: err.message });
     }
 });
 
