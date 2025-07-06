@@ -350,5 +350,30 @@ app.get('/api/admin/pending-agents', async (req, res) => {
     }
 });
 
+// Update agent status (approved/rejected)
+app.patch('/api/admin/agent-status/:agentId', async (req, res) => {
+    const { agentId } = req.params;
+    const { status } = req.body;
+
+    if (!['approved', 'rejected'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status value.' });
+    }
+
+    try {
+        const agent = await Agent.findById(agentId);
+        if (!agent) {
+            return res.status(404).json({ message: 'Agent not found.' });
+        }
+
+        agent.status = status;
+        await agent.save();
+
+        res.json({ message: `Agent status updated to ${status}.` });
+    } catch (err) {
+        console.error('Error updating agent status:', err.message);
+        res.status(500).json({ message: 'Error updating agent status.', error: err.message });
+    }
+});
+
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
