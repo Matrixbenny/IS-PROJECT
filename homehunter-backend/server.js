@@ -360,8 +360,6 @@ const sendApprovalEmail = async (agent, otp) => {
         }
     });
 
-    // Ensure the link points to agents-waitingroom.html
-    const approvalLink = `http://localhost:5000/agents-waitingroom.html?otp=${otp}`;
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: agent.email,
@@ -369,7 +367,6 @@ const sendApprovalEmail = async (agent, otp) => {
         html: `<p>Dear ${agent.fullName},</p>
                <p>Congratulations! Your application has been approved.</p>
                <p>Your OTP is: <b>${otp}</b></p>
-               <p>Click <a href="${approvalLink}">here</a> to access your agent dashboard.</p>
                <p>Thank you for joining HomeHunter Kenya!</p>`
     };
 
@@ -407,6 +404,40 @@ app.patch('/api/admin/agent-status/:agentId', async (req, res) => {
     } catch (err) {
         console.error('Error updating agent status:', err.message);
         res.status(500).json({ message: 'Error updating agent status.', error: err.message });
+    }
+});
+
+// --- OTP Verification for Agents ---
+app.post('/api/agents/verify-otp', async (req, res) => {
+    const { email, otp } = req.body;
+
+    try {
+        const agent = await Agent.findOne({ email, otp });
+        if (!agent) {
+            return res.status(400).json({ message: 'Invalid OTP or email.' });
+        }
+
+        res.status(200).json({ message: 'OTP verified successfully.' });
+    } catch (err) {
+        console.error('Error verifying OTP:', err.message);
+        res.status(500).json({ message: 'Network error. Please try again.', error: err.message });
+    }
+});
+
+// --- Agent Login ---
+app.post('/api/agents/login', async (req, res) => {
+    const { email, otp } = req.body;
+
+    try {
+        const agent = await Agent.findOne({ email, otp });
+        if (!agent) {
+            return res.status(400).json({ message: 'Invalid OTP or email.' });
+        }
+
+        res.status(200).json({ success: true, message: 'Login successful!' });
+    } catch (err) {
+        console.error('Error during agent login:', err.message);
+        res.status(500).json({ message: 'Network error. Please try again.', error: err.message });
     }
 });
 

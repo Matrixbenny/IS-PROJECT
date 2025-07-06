@@ -104,20 +104,17 @@
 
         <div class="login-section">
             <h2>Agent Login</h2>
-            <div class="otp-info">Enter your username, email, and the OTP sent to your email to log in.</div>
-            <form class="login-form" id="agentLoginForm" autocomplete="off">
-                <label for="loginUsername">Username</label>
-                <input type="text" id="loginUsername" name="username" required>
-
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" name="email" required>
-
-                <label for="loginOtp">OTP</label>
-                <input type="text" id="loginOtp" name="otp" maxlength="6" required>
-
+            <form id="agentLoginForm" class="login-form">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your full name" required>
+                <small style="color: #888; display: block; margin-top: 4px;">
+                    Your username should match the full name you provided during registration.
+                </small>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" placeholder="Enter your OTP" maxlength="6" required>
                 <button type="submit">Login</button>
-                <div class="success-msg" id="loginSuccess" style="display:none;"></div>
-                <div class="error-msg" id="loginError" style="display:none;"></div>
             </form>
         </div>
     </div>
@@ -128,9 +125,9 @@
             document.getElementById('loginError').style.display = 'none';
             document.getElementById('loginSuccess').style.display = 'none';
 
-            const username = document.getElementById('loginUsername').value.trim();
-            const email = document.getElementById('loginEmail').value.trim();
-            const otp = document.getElementById('loginOtp').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const otp = document.getElementById('otp').value.trim();
 
             // Send login request to backend
             try {
@@ -155,4 +152,33 @@
                 document.getElementById('loginError').style.display = 'block';
             }
         });
+
+        document.getElementById('verifyOtpForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const otp = document.getElementById('otp').value;
+
+            try {
+                const res = await fetch('http://localhost:5000/api/agents/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, otp })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(data.message);
+                    window.location.href = 'agent-dashboard.html';
+                } else {
+                    const error = await res.json();
+                    alert(error.message);
+                }
+            } catch (err) {
+                alert('Network error. Please try again.');
+            }
+        });
     </script>
+</body>
+</html>
