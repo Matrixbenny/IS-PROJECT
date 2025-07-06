@@ -11,6 +11,7 @@
         .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
         .form-group input, .form-group textarea { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
         .btn { padding: 10px 24px; border: none; border-radius: 5px; background: #667eea; color: #fff; cursor: pointer; }
+        .btn-auth { padding: 10px 24px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
         .pending-msg { color: #d32f2f; text-align: center; margin-top: 20px; }
     </style>
 </head>
@@ -60,6 +61,8 @@
             <div class="pending-msg" id="pendingMsg" style="display:none;">
                 Your details have been submitted for admin approval. You will be notified once approved.
             </div>
+            <button type="button" class="btn-auth" style="margin-top:10px;background:#1976d2;color:#fff;" onclick="window.location.href='agent-profile.html'">New Agents?</button>
+            <button type="button" class="btn-auth" style="margin-top:10px;background:#4caf50;color:#fff;" onclick="window.location.href='quick-login.html'">Verified Agent?</button>
         </section>
     </main>
     <script>
