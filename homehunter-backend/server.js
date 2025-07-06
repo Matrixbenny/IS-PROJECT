@@ -315,13 +315,14 @@ app.post('/api/agents/profile', upload.fields([
     { name: 'certificatePhoto', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { fullName, phone, license, idNumber, agency, bio } = req.body;
+        const { fullName, email, phone, license, idNumber, agency, bio } = req.body;
         const idPhotoUrl = req.files['idPhoto'] ? `/uploads/agents/${req.files['idPhoto'][0].filename}` : '';
         const passportPhotoUrl = req.files['passportPhoto'] ? `/uploads/agents/${req.files['passportPhoto'][0].filename}` : '';
         const certificatePhotoUrl = req.files['certificatePhoto'] ? `/uploads/agents/${req.files['certificatePhoto'][0].filename}` : '';
 
         const agent = new Agent({
             fullName,
+            email, // Ensure email is included
             phone,
             license,
             idNumber,
@@ -350,6 +351,31 @@ app.get('/api/admin/pending-agents', async (req, res) => {
     }
 });
 
+const sendApprovalEmail = async (agent, otp) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+
+    // Ensure the link points to agents-waitingroom.html
+    const approvalLink = `http://localhost:5000/agents-waitingroom.html?otp=${otp}`;
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: agent.email,
+        subject: 'Agent Approval - HomeHunter Kenya',
+        html: `<p>Dear ${agent.fullName},</p>
+               <p>Congratulations! Your application has been approved.</p>
+               <p>Your OTP is: <b>${otp}</b></p>
+               <p>Click <a href="${approvalLink}">here</a> to access your agent dashboard.</p>
+               <p>Thank you for joining HomeHunter Kenya!</p>`
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
 // Update agent status (approved/rejected)
 app.patch('/api/admin/agent-status/:agentId', async (req, res) => {
     const { agentId } = req.params;
@@ -366,8 +392,17 @@ app.patch('/api/admin/agent-status/:agentId', async (req, res) => {
         }
 
         agent.status = status;
-        await agent.save();
 
+        if (status === 'approved') {
+            // Generate OTP for approved agents
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            agent.otp = otp; // Save OTP to the agent's record
+            await sendApprovalEmail(agent, otp);
+        } else if (status === 'rejected') {
+            await sendRejectionEmail(agent);
+        }
+
+        await agent.save();
         res.json({ message: `Agent status updated to ${status}.` });
     } catch (err) {
         console.error('Error updating agent status:', err.message);
