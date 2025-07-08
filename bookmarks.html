@@ -191,7 +191,7 @@
 
                 const data = await response.json();
                 if (response.ok) {
-                    showNotification(data.message, 'success');
+                    showNotification('Favorites removed successfully.', 'success'); // Updated message
                     loadBookmarks(); // Refresh favorites
                 } else {
                     showNotification(data.message || 'Failed to remove favorite.', 'error');
