@@ -117,7 +117,7 @@ function displayProperties(properties) {
 async function bookmarkProperty(propertyId) {
     const token = localStorage.getItem('token');
     if (!token) {
-        showNotification('Login required to bookmark properties.', 'error');
+        showNotification('Login required to add properties to favorites.', 'error');
         return;
     }
 
@@ -134,12 +134,14 @@ async function bookmarkProperty(propertyId) {
         const data = await response.json();
         if (response.ok) {
             showNotification(data.message, 'success');
+        } else if (data.message === 'Property already bookmarked.') {
+            showNotification('Property already added to favorites.', 'error');
         } else {
-            showNotification(data.message || 'Failed to bookmark property.', 'error');
+            showNotification(data.message || 'Failed to add property to favorites.', 'error');
         }
     } catch (err) {
-        console.error('Error bookmarking property:', err);
-        showNotification('An error occurred while bookmarking the property.', 'error');
+        console.error('Error adding property to favorites:', err);
+        showNotification('An error occurred while adding the property to favorites.', 'error');
     }
 }
 
