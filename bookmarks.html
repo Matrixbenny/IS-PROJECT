@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarked Properties</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #f7f8fa;
+            font-family: Arial, sans-serif;
+        }
+
+        header nav {
+            display: flex;
+            justify-content: center;
+            background: #0d6efd;
+            padding: 10px 0;
+        }
+
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        header nav a.active {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #bookmarkedPropertiesGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .property-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .property-info {
+            padding: 16px;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .property-location {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .property-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 12px;
+        }
+
+        .property-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .property-actions button {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .property-actions button:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="properties.html">Properties</a>
+            <a href="bookmarks.html" class="active">Bookmarks</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Your Bookmarked Properties</h1>
+        <div id="bookmarkedPropertiesGrid"></div>
+    </main>
+    <script src="js/script.js"></script>
+    <script>
+        async function loadBookmarks() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Login required to view bookmarks.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendUrl}/bookmarks`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const properties = await response.json();
+                displayBookmarkedProperties(properties);
+            } catch (err) {
+                console.error('Error fetching bookmarks:', err);
+                showNotification('An error occurred while fetching bookmarks.', 'error');
+            }
+        }
+
+        function displayBookmarkedProperties(properties) {
+            const grid = document.getElementById('bookmarkedPropertiesGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            properties.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.innerHTML = `
+                    <div class="property-image">
+                        <img src="${p.imageUrls?.[0] || 'placeholder.jpg'}" alt="Property Image">
+                    </div>
+                    <div class="property-info">
+                        <h3 class="property-title">${p.title}</h3>
+                        <p class="property-location">${p.location}</p>
+                        <p class="property-price">Ksh ${p.price.toLocaleString()}</p>
+                        <div class="property-actions">
+                            <button onclick="removeBookmark('${p._id}')">Remove Bookmark</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function removeBookmark(propertyId) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Login required to remove bookmarks.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendUrl}/bookmarks/${propertyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showNotification(data.message, 'success');
+                    loadBookmarks(); // Refresh bookmarks
+                } else {
+                    showNotification(data.message || 'Failed to remove bookmark.', 'error');
+                }
+            } catch (err) {
+                console.error('Error removing bookmark:', err);
+                showNotification('An error occurred while removing the bookmark.', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBookmarks);
+    </script>
+</body>
+</html>

@@ -39,6 +39,7 @@ const SearchHistory = require('./models/SearchHistory');
 const UserPreferences = require('./models/UserPreferences');
 const ApprovedAgent = require('./models/approved-agents'); // Import the model
 const Message = require('./models/Message'); // Import Message model for analytics
+const Bookmark = require('./models/Bookmark'); // Import the Bookmark model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -462,6 +463,57 @@ app.get('/api/analytics/view', async (req, res) => {
     } catch (err) {
         console.error('Error fetching analytics:', err.message);
         res.status(500).json({ message: 'Failed to fetch analytics.', error: err.message });
+    }
+});
+
+// Add a property to bookmarks
+app.post('/api/bookmarks', auth, async (req, res) => {
+    const { propertyId } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const existingBookmark = await Bookmark.findOne({ userId, propertyId });
+        if (existingBookmark) {
+            return res.status(400).json({ message: 'Property already bookmarked.' });
+        }
+
+        const bookmark = new Bookmark({ userId, propertyId });
+        await bookmark.save();
+        res.status(201).json({ message: 'Property bookmarked successfully.' });
+    } catch (err) {
+        console.error('Error bookmarking property:', err.message);
+        res.status(500).json({ message: 'Error bookmarking property.', error: err.message });
+    }
+});
+
+// Get all bookmarked properties for a user
+app.get('/api/bookmarks', auth, async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const bookmarks = await Bookmark.find({ userId }).populate('propertyId');
+        res.json(bookmarks.map(bookmark => bookmark.propertyId));
+    } catch (err) {
+        console.error('Error fetching bookmarks:', err.message);
+        res.status(500).json({ message: 'Error fetching bookmarks.', error: err.message });
+    }
+});
+
+// Remove a property from bookmarks
+app.delete('/api/bookmarks/:propertyId', auth, async (req, res) => {
+    const userId = req.user.id;
+    const { propertyId } = req.params;
+
+    try {
+        const bookmark = await Bookmark.findOneAndDelete({ userId, propertyId });
+        if (!bookmark) {
+            return res.status(404).json({ message: 'Bookmark not found.' });
+        }
+
+        res.json({ message: 'Bookmark removed successfully.' });
+    } catch (err) {
+        console.error('Error removing bookmark:', err.message);
+        res.status(500).json({ message: 'Error removing bookmark.', error: err.message });
     }
 });
 

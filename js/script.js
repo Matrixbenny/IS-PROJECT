@@ -106,12 +106,41 @@ function displayProperties(properties) {
                 </div>
                 <div class="property-actions">
                     <button onclick="viewDetails('${p._id}')">View Details</button>
-                    <button onclick="likeProperty('${p._id}')">❤</button>
+                    <button onclick="bookmarkProperty('${p._id}')">Bookmark</button>
                 </div>
             </div>
         `;
         grid.appendChild(card);
     });
+}
+
+async function bookmarkProperty(propertyId) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        showNotification('Login required to bookmark properties.', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${backendUrl}/bookmarks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ propertyId })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'Failed to bookmark property.', 'error');
+        }
+    } catch (err) {
+        console.error('Error bookmarking property:', err);
+        showNotification('An error occurred while bookmarking the property.', 'error');
+    }
 }
 
 // --- View Property Details ---
