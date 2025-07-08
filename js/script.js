@@ -133,7 +133,7 @@ async function bookmarkProperty(propertyId) {
 
         const data = await response.json();
         if (response.ok) {
-            showNotification(data.message, 'success');
+            showNotification('Property added to favorites successfully.', 'success'); // Updated message
         } else if (data.message === 'Property already bookmarked.') {
             showNotification('Property already added to favorites.', 'error');
         } else {
