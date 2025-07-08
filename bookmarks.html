@@ -111,6 +111,31 @@
         .property-actions button:hover {
             background: #c82333;
         }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background: #0d6efd;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .fas {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -124,6 +149,11 @@
     <main>
         <h1>Your Favorite Properties</h1>
         <div id="bookmarkedPropertiesGrid"></div>
+        <div class="text-center" style="margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="downloadBookmarksReport()">
+                <i class="fas fa-download"></i> Download Favorites Report
+            </button>
+        </div>
     </main>
     <script src="js/script.js"></script>
     <script>
@@ -199,6 +229,49 @@
             } catch (err) {
                 console.error('Error removing favorite:', err);
                 showNotification('An error occurred while removing the favorite.', 'error');
+            }
+        }
+
+        async function downloadBookmarksReport() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Login required to download favorites report.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendUrl}/bookmarks`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const properties = await response.json();
+
+                if (!properties.length) {
+                    showNotification('No favorites to include in the report.', 'error');
+                    return;
+                }
+
+                // Generate CSV content
+                let csvContent = 'Title,Location,Price,Bedrooms,Bathrooms,Type\n';
+                properties.forEach(p => {
+                    csvContent += `${p.title},${p.location},${p.price},${p.bedrooms},${p.bathrooms},${p.type}\n`;
+                });
+
+                // Create a Blob and download the file
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'favorites_report.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showNotification('Favorites report downloaded successfully.', 'success');
+            } catch (err) {
+                console.error('Error downloading favorites report:', err);
+                showNotification('An error occurred while downloading the report.', 'error');
             }
         }
 

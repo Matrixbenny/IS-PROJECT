@@ -154,15 +154,18 @@ nav {
 }
 
 .btn-secondary {
-    background: #e0e0e0;
-    color: #555;
-    border: 1px solid #ccc;
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .btn-secondary:hover {
-    background: #d0d0d0;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #5a6268;
 }
 
 .btn-hero {
