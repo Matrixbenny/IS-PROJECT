@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookmarked Properties</title>
+    <title>Favorite Properties</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
@@ -81,7 +81,7 @@
         .property-location {
             font-size: 1rem;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 8px.
         }
 
         .property-price {
@@ -118,11 +118,11 @@
         <nav>
             <a href="index.html">Home</a>
             <a href="properties.html">Properties</a>
-            <a href="bookmarks.html" class="active">Bookmarks</a>
+            <a href="bookmarks.html" class="active">Favorites</a>
         </nav>
     </header>
     <main>
-        <h1>Your Bookmarked Properties</h1>
+        <h1>Your Favorite Properties</h1>
         <div id="bookmarkedPropertiesGrid"></div>
     </main>
     <script src="js/script.js"></script>
@@ -130,7 +130,7 @@
         async function loadBookmarks() {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Login required to view bookmarks.', 'error');
+                showNotification('Login required to view favorites.', 'error');
                 return;
             }
 
@@ -144,8 +144,8 @@
                 const properties = await response.json();
                 displayBookmarkedProperties(properties);
             } catch (err) {
-                console.error('Error fetching bookmarks:', err);
-                showNotification('An error occurred while fetching bookmarks.', 'error');
+                console.error('Error fetching favorites:', err);
+                showNotification('An error occurred while fetching favorites.', 'error');
             }
         }
 
@@ -166,7 +166,7 @@
                         <p class="property-location">${p.location}</p>
                         <p class="property-price">Ksh ${p.price.toLocaleString()}</p>
                         <div class="property-actions">
-                            <button onclick="removeBookmark('${p._id}')">Remove Bookmark</button>
+                            <button onclick="removeBookmark('${p._id}')">Remove Favorite</button>
                         </div>
                     </div>
                 `;
@@ -177,7 +177,7 @@
         async function removeBookmark(propertyId) {
             const token = localStorage.getItem('token');
             if (!token) {
-                showNotification('Login required to remove bookmarks.', 'error');
+                showNotification('Login required to remove favorites.', 'error');
                 return;
             }
 
@@ -192,13 +192,13 @@
                 const data = await response.json();
                 if (response.ok) {
                     showNotification(data.message, 'success');
-                    loadBookmarks(); // Refresh bookmarks
+                    loadBookmarks(); // Refresh favorites
                 } else {
-                    showNotification(data.message || 'Failed to remove bookmark.', 'error');
+                    showNotification(data.message || 'Failed to remove favorite.', 'error');
                 }
             } catch (err) {
-                console.error('Error removing bookmark:', err);
-                showNotification('An error occurred while removing the bookmark.', 'error');
+                console.error('Error removing favorite:', err);
+                showNotification('An error occurred while removing the favorite.', 'error');
             }
         }
 
