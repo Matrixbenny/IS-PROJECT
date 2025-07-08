@@ -106,7 +106,7 @@ function displayProperties(properties) {
                 </div>
                 <div class="property-actions">
                     <button onclick="viewDetails('${p._id}')">View Details</button>
-                    <button onclick="bookmarkProperty('${p._id}')">Bookmark</button>
+                    <button onclick="bookmarkProperty('${p._id}')"><i class="fas fa-heart"></i> Add to Favorites</button>
                 </div>
             </div>
         `;
