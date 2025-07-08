@@ -162,35 +162,6 @@ function viewDetails(propertyId) {
     window.location.href = `property-details.html?id=${propertyId}`;
 }
 
-// --- Like/Favorite a Property ---
-async function likeProperty(propertyId) {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!token || !user) return showNotification('Login required to like properties', 'error');
-
-    try {
-        const res = await fetch(`${backendUrl.replace('/api', '')}/users/${user.id}/favorites`, { // Adjusted URL for favorites endpoint
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ propertyId })
-        });
-        if (res.ok) {
-            showNotification('Property added to favorites!', 'success');
-        } else {
-            const data = await res.json();
-            showNotification(data.message || 'Failed to like property', 'error');
-        }
-    } catch (err) {
-        console.error('Error liking property:', err);
-        showNotification('An error occurred while liking property', 'error');
-    }
-}
-
-
 // --- Generate AI Recommendations ---
 async function generateRecommendations() {
     const token = localStorage.getItem('token');

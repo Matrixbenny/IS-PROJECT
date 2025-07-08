@@ -35,7 +35,6 @@ if (!fs.existsSync(uploadDir)){
 // --- Import Models ---
 const User = require('./models/User');
 const Property = require('./models/Property');
-const Favorite = require('./models/Favorite');
 const SearchHistory = require('./models/SearchHistory');
 const UserPreferences = require('./models/UserPreferences');
 const ApprovedAgent = require('./models/approved-agents'); // Import the model
@@ -206,42 +205,6 @@ app.get('/api/properties/:id', async (req, res) => {
     } catch (err) {
         console.error('Error fetching property:', err.message);
         res.status(500).json({ message: 'Error fetching property', error: err.message });
-    }
-});
-
-// --- Favorites ---
-app.post('/api/users/:id/favorites', auth, async (req, res) => {
-    try {
-        // Ensure propertyId is sent in the request body
-        if (!req.body.propertyId) {
-            return res.status(400).json({ message: 'Property ID is required.' });
-        }
-        const fav = new Favorite({ userId: req.params.id, propertyId: req.body.propertyId });
-        await fav.save();
-        res.status(201).json(fav);
-    } catch (err) {
-        console.error('Error adding favorite:', err.message);
-        res.status(500).json({ message: 'Error adding favorite', error: err.message });
-    }
-});
-
-app.get('/api/users/:id/favorites', auth, async (req, res) => {
-    try {
-        const favorites = await Favorite.find({ userId: req.params.id }).populate('propertyId'); // Populate to get property details
-        res.json(favorites);
-    } catch (err) {
-        console.error('Error fetching favorites:', err.message);
-        res.status(500).json({ message: 'Error fetching favorites', error: err.message });
-    }
-});
-
-app.delete('/api/users/:id/favorites/:propertyId', auth, async (req, res) => {
-    try {
-        await Favorite.deleteOne({ userId: req.params.id, propertyId: req.params.propertyId });
-        res.json({ message: 'Favorite removed' });
-    } catch (err) {
-        console.error('Error deleting favorite:', err.message);
-        res.status(500).json({ message: 'Error deleting favorite', error: err.message });
     }
 });
 
