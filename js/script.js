@@ -224,6 +224,46 @@ async function generateRecommendations() {
     }
 }
 
+// --- Download Available Properties Report ---
+async function downloadAvailablePropertiesReport() {
+    try {
+        const response = await fetch(`${backendUrl}/properties`);
+        
+        // Check if the response is successful
+        if (!response.ok) {
+            throw new Error('Failed to fetch available properties.');
+        }
+
+        const properties = await response.json();
+
+        // Check if there are properties to include in the report
+        if (!properties.length) {
+            showNotification('No available properties to include in the report.', 'error');
+            return;
+        }
+
+        // Generate CSV content
+        let csvContent = 'Title,Location,Price,Bedrooms,Bathrooms,Type\n';
+        properties.forEach(p => {
+            csvContent += `${p.title},${p.location},${p.price},${p.bedrooms},${p.bathrooms},${p.type}\n`;
+        });
+
+        // Create a Blob and download the file
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'available_properties_report.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showNotification('Available properties report downloaded successfully.', 'success');
+    } catch (err) {
+        console.error('Error downloading available properties report:', err);
+        showNotification('An error occurred while downloading the report.', 'error');
+    }
+}
+
 // --- Notification Utility ---
 function showNotification(message, type = 'info') {
     let notif = document.getElementById('globalNotification');
