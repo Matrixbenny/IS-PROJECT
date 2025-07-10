@@ -534,5 +534,16 @@ app.post('/api/feedback', async (req, res) => {
     }
 });
 
+// Admin route to get all feedback
+app.get('/api/admin/feedback', async (req, res) => {
+    try {
+        const feedback = await Feedback.find(); // Fetch all feedback from the database
+        res.status(200).json(feedback);
+    } catch (err) {
+        console.error('Error fetching feedback:', err.message);
+        res.status(500).json({ message: 'Error fetching feedback.', error: err.message });
+    }
+});
+
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

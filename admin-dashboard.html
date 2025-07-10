@@ -217,6 +217,23 @@
             </table>
             <div id="adminActionsMsg"></div>
         </section>
+        <section class="admin-section">
+            <h2><i class="fas fa-comments"></i> User Feedback</h2>
+            <table class="pending-agents-table" id="feedbackTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        <th>Date Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Feedback will be loaded here -->
+                </tbody>
+            </table>
+            <div id="feedbackActionsMsg"></div>
+        </section>
     </main>
 
     <footer>
@@ -245,6 +262,7 @@
             }
             document.getElementById('adminDashboardLink').style.display = 'block';
             loadPendingAgents();
+            loadFeedback(); // Load feedback
             document.getElementById('agentSearch').addEventListener('input', filterAgents);
         });
 
@@ -331,6 +349,39 @@
             } catch {
                 document.getElementById('adminActionsMsg').textContent = 'Error updating agent status.';
             }
+        }
+
+        async function loadFeedback() {
+            const tableBody = document.querySelector('#feedbackTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:5000/api/admin/feedback', {
+                    headers: { 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token }
+                });
+                const feedback = await res.json();
+                if (!feedback.length) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No feedback available.</td></tr>';
+                    return;
+                }
+                renderFeedback(feedback);
+            } catch (err) {
+                tableBody.innerHTML = '<tr><td colspan="4">Error loading feedback.</td></tr>';
+            }
+        }
+
+        function renderFeedback(feedback) {
+            const tableBody = document.querySelector('#feedbackTable tbody');
+            tableBody.innerHTML = '';
+            feedback.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td data-label="Name">${item.name || '-'}</td>
+                    <td data-label="Email">${item.email || '-'}</td>
+                    <td data-label="Message">${item.message || '-'}</td>
+                    <td data-label="Date Submitted">${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '-'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
         }
 
         function logout() {
