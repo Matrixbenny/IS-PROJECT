@@ -197,6 +197,9 @@
             <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
             <h2><i class="fas fa-user-clock"></i> Pending Agent Approvals</h2>
             <input type="text" id="agentSearch" placeholder="🔍 Search agents by name, email, or phone...">
+            <button class="btn btn-secondary" onclick="downloadPendingApprovalsReport()">
+                <i class="fas fa-download"></i> Download Pending Approvals Report
+            </button>
             <table class="pending-agents-table" id="pendingAgentsTable">
                 <thead>
                     <tr>
@@ -219,6 +222,9 @@
         </section>
         <section class="admin-section">
             <h2><i class="fas fa-comments"></i> User Feedback</h2>
+            <button class="btn btn-secondary" onclick="downloadFeedbackReport()">
+                <i class="fas fa-download"></i> Download Feedback Report
+            </button>
             <table class="pending-agents-table" id="feedbackTable">
                 <thead>
                     <tr>
@@ -351,6 +357,50 @@
             }
         }
 
+        function downloadPendingApprovalsReport() {
+            const headers = ['Name', 'Email', 'Phone', 'License', 'ID/Passport', 'Agency', 'KRA PIN', 'Date Registered'];
+            const rows = allAgents.map(agent => [
+                agent.fullName || agent.name || '-',
+                agent.email || '-',
+                agent.phone || '-',
+                agent.license || '-',
+                agent.idNumber || '-',
+                agent.agency || '-',
+                agent.kraPin || '-',
+                agent.createdAt ? new Date(agent.createdAt).toLocaleDateString() : '-'
+            ]);
+            generateCSV(headers, rows, 'PendingApprovalsReport.csv');
+        }
+
+        function downloadFeedbackReport() {
+            const headers = ['Name', 'Email', 'Message', 'Date Submitted'];
+            const rows = feedbackData.map(item => [
+                item.name || '-',
+                item.email || '-',
+                item.message || '-',
+                item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '-'
+            ]);
+            generateCSV(headers, rows, 'FeedbackReport.csv');
+        }
+
+        function generateCSV(headers, rows, filename) {
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.map(value => `"${value}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        let feedbackData = []; // Store feedback data globally
+
         async function loadFeedback() {
             const tableBody = document.querySelector('#feedbackTable tbody');
             tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
@@ -358,12 +408,12 @@
                 const res = await fetch('http://localhost:5000/api/admin/feedback', {
                     headers: { 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token }
                 });
-                const feedback = await res.json();
-                if (!feedback.length) {
+                feedbackData = await res.json(); // Store feedback data globally
+                if (!feedbackData.length) {
                     tableBody.innerHTML = '<tr><td colspan="4">No feedback available.</td></tr>';
                     return;
                 }
-                renderFeedback(feedback);
+                renderFeedback(feedbackData);
             } catch (err) {
                 tableBody.innerHTML = '<tr><td colspan="4">Error loading feedback.</td></tr>';
             }
