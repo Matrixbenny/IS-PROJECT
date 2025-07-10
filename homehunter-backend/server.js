@@ -40,6 +40,7 @@ const UserPreferences = require('./models/UserPreferences');
 const ApprovedAgent = require('./models/approved-agents'); // Import the model
 const Message = require('./models/Message'); // Import Message model for analytics
 const Bookmark = require('./models/Bookmark'); // Import the Bookmark model
+const Feedback = require('./models/Feedback'); // Import Feedback model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -514,6 +515,22 @@ app.delete('/api/bookmarks/:propertyId', auth, async (req, res) => {
     } catch (err) {
         console.error('Error removing bookmark:', err.message);
         res.status(500).json({ message: 'Error removing bookmark.', error: err.message });
+    }
+});
+
+// --- Feedback submission route ---
+app.post('/api/feedback', async (req, res) => {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+    try {
+        const feedback = new Feedback({ name, email, message });
+        await feedback.save();
+        res.status(201).json({ message: 'Feedback submitted successfully!' });
+    } catch (err) {
+        console.error('Error saving feedback:', err.message);
+        res.status(500).json({ message: 'Error saving feedback.', error: err.message });
     }
 });
 

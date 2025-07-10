@@ -126,6 +126,27 @@
                 </div>
             </div>
         </section>
+        <section class="feedback-section fade-in">
+            <div class="container">
+                <h2 class="text-center mb-2">We Value Your Feedback</h2>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="feedbackName">Your Name</label>
+                        <input type="text" id="feedbackName" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackEmail">Your Email</label>
+                        <input type="email" id="feedbackEmail" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackMessage">Your Feedback</label>
+                        <textarea id="feedbackMessage" name="message" rows="6" placeholder="Your feedback here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </form>
+                <div id="feedbackMessage" style="margin-top:1em;"></div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -171,6 +192,32 @@
                     localStorage.setItem('user', JSON.stringify(user));
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+        document.getElementById('feedbackForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('feedbackName').value;
+            const email = document.getElementById('feedbackEmail').value;
+            const message = document.getElementById('feedbackMessage').value;
+            const feedbackMsg = document.getElementById('feedbackMessage');
+
+            feedbackMsg.textContent = 'Submitting feedback...';
+
+            try {
+                const res = await fetch('http://localhost:5000/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    feedbackMsg.textContent = 'Thank you for your feedback!';
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    feedbackMsg.textContent = data.message || 'Failed to submit feedback.';
+                }
+            } catch (err) {
+                feedbackMsg.textContent = 'An error occurred. Please try again.';
             }
         });
     </script>

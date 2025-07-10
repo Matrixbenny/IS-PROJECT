@@ -612,6 +612,40 @@ footer p {
     margin-bottom: 5px;
 }
 
+/* --- Feedback Section --- */
+.feedback-section {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.feedback-section h2 {
+    margin-bottom: 20px;
+}
+
+.feedback-section .form-group {
+    margin-bottom: 15px;
+}
+
+.feedback-section .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.feedback-section .form-group input,
+.feedback-section .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.feedback-section .btn {
+    margin-top: 10px;
+}
+
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
     .nav-links {
