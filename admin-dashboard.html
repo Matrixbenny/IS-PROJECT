@@ -505,19 +505,22 @@
                 const res = await fetch(`http://localhost:5000/api/admin/property-status/${propertyId}`, {
                     method: 'PATCH',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('adminToken')}` // Include JWT token for authentication
                     },
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify({ status }) // Send the status in the request body
                 });
 
                 if (res.ok) {
-                    alert(`Property ${status} successfully.`);
+                    const responseData = await res.json();
+                    alert(responseData.message);
                     loadPendingProperties(); // Reload the table
                 } else {
-                    alert('Failed to update property status.');
+                    const errorData = await res.json();
+                    alert(`Failed to update property status: ${errorData.message}`);
                 }
             } catch (err) {
-                alert('Error updating property status.');
+                alert('Error updating property status. Please try again.');
             }
         }
 

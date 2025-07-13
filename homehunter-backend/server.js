@@ -586,12 +586,12 @@ app.get('/api/admin/pending-properties', async (req, res) => {
 });
 
 // --- Update Property Status ---
-app.patch('/api/admin/property-status/:id', auth, async (req, res) => {
+app.patch('/api/admin/property-status/:id', async (req, res) => {
     const { status } = req.body; // 'approved' or 'rejected'
     const { id } = req.params;
 
     try {
-        const property = await PendingProperty.findById(id);
+        const property = await PendingProperty.findById(id); // Find the property by ID
         if (!property) {
             return res.status(404).json({ message: 'Property not found.' });
         }
