@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Properties - HomeHunter Kenya</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(to bottom, #2c3e50, #4ca1af);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #f1c40f;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="file"] {
+            background: #34495e;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            background: #f1c40f;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #e67e22;
+        }
+
+        .mythological-bg {
+            background-image: url('mythological-bg.jpg'); /* Replace with a mythological-themed image */
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="mythological-bg"></div>
+    <div class="container">
+        <h1>Pending Properties Form</h1>
+        <form id="propertyForm">
+            <label for="propertyTitle">Property Title:</label>
+            <input type="text" id="propertyTitle" name="propertyTitle" placeholder="Enter property title" required>
+
+            <label for="propertyLocation">Location:</label>
+            <input type="text" id="propertyLocation" name="propertyLocation" placeholder="Enter property location" required>
+
+            <label for="propertyPrice">Price:</label>
+            <input type="number" id="propertyPrice" name="propertyPrice" placeholder="Enter property price" required>
+
+            <label for="propertyDescription">Description:</label>
+            <textarea id="propertyDescription" name="propertyDescription" placeholder="Enter property description" rows="4" required></textarea>
+
+            <label for="propertyBeds">Number of Bedrooms:</label>
+            <input type="number" id="propertyBeds" name="propertyBeds" placeholder="Enter number of bedrooms" required>
+
+            <label for="propertyBaths">Number of Bathrooms:</label>
+            <input type="number" id="propertyBaths" name="propertyBaths" placeholder="Enter number of bathrooms" required>
+
+            <label for="propertyType">Property Type:</label>
+            <select id="propertyType" name="propertyType" required>
+                <option value="Apartment">Apartment</option>
+                <option value="House">House</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Commercial">Commercial</option>
+            </select>
+
+            <label for="propertyFeatures">Features:</label>
+            <textarea id="propertyFeatures" name="propertyFeatures" placeholder="Enter property features (e.g., Swimming Pool, Gym)" rows="3"></textarea>
+
+            <label for="propertyOwnerPhone">Owner Contact:</label>
+            <input type="text" id="propertyOwnerPhone" name="propertyOwnerPhone" placeholder="Enter owner phone number" required>
+
+            <label for="propertyImage">Upload Property Image:</label>
+            <input type="file" id="propertyImage" name="propertyImage" accept="image/*" required>
+
+            <button type="submit">Submit Property</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('propertyForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const propertyData = {
+                title: document.getElementById('propertyTitle').value.trim(),
+                location: document.getElementById('propertyLocation').value.trim(),
+                price: document.getElementById('propertyPrice').value.trim(),
+                description: document.getElementById('propertyDescription').value.trim(),
+                beds: document.getElementById('propertyBeds').value.trim(),
+                baths: document.getElementById('propertyBaths').value.trim(),
+                type: document.getElementById('propertyType').value.trim(),
+                features: document.getElementById('propertyFeatures').value.trim(),
+                ownerPhone: document.getElementById('propertyOwnerPhone').value.trim(),
+                imageUrl: document.getElementById('propertyImage').files[0]?.name || '' // Handle image upload
+            };
+
+            try {
+                const res = await fetch('http://localhost:5000/api/properties/pending', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (res.ok) {
+                    const responseData = await res.json();
+                    alert(responseData.message);
+                    document.getElementById('propertyForm').reset(); // Clear the form
+                } else {
+                    const errorData = await res.json();
+                    alert(`Failed to submit property: ${errorData.message}`);
+                }
+            } catch (err) {
+                alert('Network error. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

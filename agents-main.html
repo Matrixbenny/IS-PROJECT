@@ -169,7 +169,7 @@
             <div class="workstation-section">
                 <h3>Manage Properties</h3>
                 <p>Add, edit, or delete your property listings.</p>
-                <button onclick="openManagePropertiesModal()">Manage Properties</button>
+                <button onclick="navigateToPendingProperties()">Manage Properties</button>
             </div>
             <div class="workstation-section">
                 <h3>View Analytics</h3>
@@ -389,6 +389,10 @@
         // Placeholder functions for other workstation actions
         function viewMessages() {
             alert('View Messages functionality coming soon!');
+        }
+
+        function navigateToPendingProperties() {
+            window.location.href = 'pendingproperties.html'; // Redirect to the pendingproperties.html file
         }
     </script>
 </body>

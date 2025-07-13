@@ -41,6 +41,7 @@ const ApprovedAgent = require('./models/approved-agents'); // Import the model
 const Message = require('./models/Message'); // Import Message model for analytics
 const Bookmark = require('./models/Bookmark'); // Import the Bookmark model
 const Feedback = require('./models/Feedback'); // Import Feedback model
+const PendingProperty = require('./models/PendingProperty'); // Import PendingProperty model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -542,6 +543,65 @@ app.get('/api/admin/feedback', async (req, res) => {
     } catch (err) {
         console.error('Error fetching feedback:', err.message);
         res.status(500).json({ message: 'Error fetching feedback.', error: err.message });
+    }
+});
+
+// --- Save Pending Property ---
+app.post('/api/properties/pending', async (req, res) => {
+    const { title, location, price, description, beds, baths, type, features, ownerPhone, imageUrl } = req.body;
+
+    try {
+        const pendingProperty = new PendingProperty({
+            title,
+            location,
+            price,
+            description,
+            beds,
+            baths,
+            type,
+            features,
+            ownerPhone,
+            imageUrl,
+            status: 'pending', // Default status
+            createdAt: new Date()
+        });
+
+        await pendingProperty.save(); // Save the property to the database
+        res.status(201).json({ message: 'Property submitted successfully and marked as pending.' });
+    } catch (err) {
+        console.error('Error saving pending property:', err.message);
+        res.status(500).json({ message: 'Error saving property.', error: err.message });
+    }
+});
+
+// --- Fetch Pending Properties ---
+app.get('/api/admin/pending-properties', async (req, res) => {
+    try {
+        const pendingProperties = await PendingProperty.find({ status: 'pending' }); // Fetch properties with 'pending' status
+        res.status(200).json(pendingProperties);
+    } catch (err) {
+        console.error('Error fetching pending properties:', err.message);
+        res.status(500).json({ message: 'Error fetching properties.', error: err.message });
+    }
+});
+
+// --- Update Property Status ---
+app.patch('/api/admin/property-status/:id', auth, async (req, res) => {
+    const { status } = req.body; // 'approved' or 'rejected'
+    const { id } = req.params;
+
+    try {
+        const property = await PendingProperty.findById(id);
+        if (!property) {
+            return res.status(404).json({ message: 'Property not found.' });
+        }
+
+        property.status = status; // Update the status
+        await property.save(); // Save the updated property
+        res.status(200).json({ message: `Property ${status} successfully.` });
+    } catch (err) {
+        console.error('Error updating property status:', err.message);
+        res.status(500).json({ message: 'Error updating property status.', error: err.message });
     }
 });
 
