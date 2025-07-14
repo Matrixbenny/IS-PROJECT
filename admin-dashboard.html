@@ -718,6 +718,60 @@
                 alert('Error deleting property. Please try again.');
             }
         }
+
+        async function postProperty(propertyId) {
+            try {
+                // Fetch the property details from the PendingProperty model
+                const res = await fetch(`http://localhost:5000/api/admin/pending-properties/${propertyId}`, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } // Include JWT token for authentication
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    alert(`Failed to fetch property details: ${errorData.message}`);
+                    return;
+                }
+
+                const property = await res.json();
+
+                // Prepare the data to post to the Properties table
+                const postData = {
+                    title: property.title,
+                    location: property.location,
+                    price: property.price,
+                    description: property.description,
+                    beds: property.beds,
+                    baths: property.baths,
+                    type: property.type,
+                    features: property.features,
+                    ownerPhone: property.ownerPhone,
+                    imageUrl: property.imageUrl
+                };
+
+                // Send the property details to the Properties table
+                const postRes = await fetch('http://localhost:5000/api/properties/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('adminToken')}` // Include JWT token for authentication
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                if (postRes.ok) {
+                    const responseData = await postRes.json();
+                    alert(responseData.message);
+
+                    // Optionally, reload the table or remove the property from the pending list
+                    loadAllProperties(); // Reload the table
+                } else {
+                    const errorData = await postRes.json();
+                    alert(`Failed to post property: ${errorData.message}`);
+                }
+            } catch (err) {
+                alert('Error posting property. Please try again.');
+            }
+        }
     </script>
 </body>
 </html>

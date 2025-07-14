@@ -643,5 +643,50 @@ app.delete('/api/admin/delete-property/:id', async (req, res) => {
     }
 });
 
+// --- Post Property ---
+app.post('/api/properties/post', async (req, res) => {
+    const { title, location, price, description, beds, baths, type, features, ownerPhone, imageUrl } = req.body;
+
+    try {
+        console.log('Incoming property data:', req.body); // Log the incoming data
+
+        const newProperty = new Property({
+            title,
+            location,
+            price,
+            description,
+            beds,
+            baths,
+            type,
+            features,
+            ownerPhone,
+            imageUrl,
+            createdAt: new Date()
+        });
+
+        await newProperty.save(); // Save the property to the database
+        res.status(201).json({ message: 'Property posted successfully.' });
+    } catch (err) {
+        console.error('Error posting property:', err.message); // Log the error
+        res.status(500).json({ message: 'Error posting property.', error: err.message });
+    }
+});
+
+// --- Get Pending Property Details ---
+app.get('/api/admin/pending-properties/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const property = await PendingProperty.findById(id); // Find the property by ID
+        if (!property) {
+            return res.status(404).json({ message: 'Property not found.' });
+        }
+        res.status(200).json(property);
+    } catch (err) {
+        console.error('Error fetching property details:', err.message);
+        res.status(500).json({ message: 'Error fetching property details.', error: err.message });
+    }
+});
+
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
