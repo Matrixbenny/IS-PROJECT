@@ -126,23 +126,30 @@ app.post('/api/register', async (req, res) => {
 });
 
 
-// --- Confirmation Code Verification Endpoint ---
+// --- Verify Confirmation Code ---
 app.post('/api/verify-code', async (req, res) => {
     const { email, code } = req.body;
-    if (!email || !code) return res.status(400).json({ message: 'Email and code are required.' });
+
     try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: 'User not found.' });
-        if (user.isVerified) return res.status(400).json({ message: 'User already verified.' });
-        if (user.verificationCode !== code) return res.status(400).json({ message: 'Invalid confirmation code.' });
-        if (user.verificationCodeExpires < new Date()) return res.status(400).json({ message: 'Confirmation code expired.' });
-        user.isVerified = true;
-        user.verificationCode = undefined;
-        user.verificationCodeExpires = undefined;
+        console.log('Incoming verification request:', req.body); // Debugging
+
+        const user = await User.findOne({ email }); // Find the user by email
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        if (user.verificationCode !== code) {
+            return res.status(400).json({ message: 'Invalid confirmation code.' });
+        }
+
+        user.isVerified = true; // Mark the user as verified
+        user.verificationCode = null; // Clear the verification code
         await user.save();
-        res.json({ message: 'Account verified successfully! You can now log in.' });
+
+        res.status(200).json({ message: 'Account verified successfully.' });
     } catch (err) {
-        res.status(500).json({ message: 'Verification error', error: err.message });
+        console.error('Error verifying account:', err.message); // Debugging
+        res.status(500).json({ message: 'Error verifying account.', error: err.message });
     }
 });
 

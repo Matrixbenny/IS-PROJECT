@@ -32,13 +32,19 @@
             const msg = document.getElementById('verifyMessage');
             const loginLink = document.getElementById('loginLink');
             msg.textContent = 'Verifying...';
+
+            console.log('Verification request:', { email, code }); // Debugging
+
             try {
                 const res = await fetch('http://localhost:5000/api/verify-code', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, code })
                 });
+
                 const data = await res.json();
+                console.log('Response from server:', data); // Debugging
+
                 if (res.ok) {
                     msg.textContent = 'Account verified! You can now log in.';
                     loginLink.style.display = 'inline-block';
@@ -46,6 +52,7 @@
                     msg.textContent = data.message || 'Verification failed.';
                 }
             } catch (err) {
+                console.error('Error during verification:', err.message); // Debugging
                 msg.textContent = 'Verification failed. Please try again.';
             }
         });
