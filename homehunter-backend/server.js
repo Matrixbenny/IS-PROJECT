@@ -627,5 +627,21 @@ app.get('/api/admin/all-properties', async (req, res) => {
     }
 });
 
+// --- Delete Property ---
+app.delete('/api/admin/delete-property/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const property = await PendingProperty.findByIdAndDelete(id); // Delete the property by ID
+        if (!property) {
+            return res.status(404).json({ message: 'Property not found.' });
+        }
+        res.status(200).json({ message: 'Property deleted successfully.' });
+    } catch (err) {
+        console.error('Error deleting property:', err.message);
+        res.status(500).json({ message: 'Error deleting property.', error: err.message });
+    }
+});
+
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

@@ -309,6 +309,7 @@
                         <th>Type</th>
                         <th>Status</th>
                         <th>Owner Phone</th>
+                        <th>Actions</th> <!-- New column for Post and Delete buttons -->
                     </tr>
                 </thead>
                 <tbody>
@@ -682,9 +683,40 @@
                     <td>${property.type}</td>
                     <td>${property.status}</td>
                     <td>${property.ownerPhone}</td>
+                    <td>
+                        <button class="action-btn post" onclick="postProperty('${property._id}')">Post</button>
+                        <button class="action-btn delete" onclick="deleteProperty('${property._id}')">Delete</button>
+                    </td>
                 `;
                 tableBody.appendChild(tr);
             });
+        }
+        function postProperty(propertyId) {
+            alert(`Post functionality for property ID: ${propertyId} is not implemented yet.`);
+            // Placeholder for future implementation
+        }
+
+        async function deleteProperty(propertyId) {
+            if (!confirm('Are you sure you want to delete this property?')) return;
+
+            try {
+                const res = await fetch(`http://localhost:5000/api/admin/delete-property/${propertyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('adminToken')}` // Include JWT token for authentication
+                    }
+                });
+
+                if (res.ok) {
+                    alert('Property deleted successfully.');
+                    loadAllProperties(); // Reload the table
+                } else {
+                    const errorData = await res.json();
+                    alert(`Failed to delete property: ${errorData.message}`);
+                }
+            } catch (err) {
+                alert('Error deleting property. Please try again.');
+            }
         }
     </script>
 </body>
