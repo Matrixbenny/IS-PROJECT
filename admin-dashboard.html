@@ -294,6 +294,9 @@
             <button class="btn btn-secondary" onclick="loadAllProperties()">
                 <i class="fas fa-list"></i> Get All Properties
             </button>
+            <button class="btn btn-secondary" onclick="downloadAllPropertiesReport()">
+                <i class="fas fa-download"></i> Download All Properties Report
+            </button>
             <table class="pending-agents-table" id="allPropertiesTable">
                 <thead>
                     <tr>
@@ -457,6 +460,22 @@
                 item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '-'
             ]);
             generateCSV(headers, rows, 'FeedbackReport.csv');
+        }
+
+        function downloadAllPropertiesReport() {
+            const headers = ['Title', 'Location', 'Price', 'Description', 'Beds', 'Baths', 'Type', 'Status', 'Owner Phone'];
+            const rows = allProperties.map(property => [
+                property.title || '-',
+                property.location || '-',
+                property.price || '-',
+                property.description || '-',
+                property.beds || '-',
+                property.baths || '-',
+                property.type || '-',
+                property.status || '-',
+                property.ownerPhone || '-'
+            ]);
+            generateCSV(headers, rows, 'AllPropertiesReport.csv');
         }
 
         function generateCSV(headers, rows, filename) {
