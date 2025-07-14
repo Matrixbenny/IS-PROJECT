@@ -265,6 +265,55 @@
             </table>
             <div id="propertyActionsMsg"></div>
         </section>
+        <section class="admin-section">
+            <h2><i class="fas fa-home"></i> Approved Properties</h2>
+            <button class="btn btn-secondary" onclick="loadApprovedProperties()">
+                <i class="fas fa-check-circle"></i> Get Approved Properties
+            </button>
+            <table class="pending-agents-table" id="approvedPropertiesTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Beds</th>
+                        <th>Baths</th>
+                        <th>Type</th>
+                        <th>Owner Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Approved properties will be loaded here -->
+                </tbody>
+            </table>
+            <div id="approvedPropertiesMsg"></div>
+        </section>
+        <section class="admin-section">
+            <h2><i class="fas fa-home"></i> All Properties</h2>
+            <button class="btn btn-secondary" onclick="loadAllProperties()">
+                <i class="fas fa-list"></i> Get All Properties
+            </button>
+            <table class="pending-agents-table" id="allPropertiesTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Beds</th>
+                        <th>Baths</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Owner Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- All properties will be loaded here -->
+                </tbody>
+            </table>
+            <div id="allPropertiesMsg"></div>
+        </section>
     </main>
 
     <footer>
@@ -542,6 +591,81 @@
         function logout() {
             localStorage.removeItem('user');
             window.location.href = 'login.html';
+        }
+
+        async function loadApprovedProperties() {
+            const tableBody = document.querySelector('#approvedPropertiesTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="8">Loading...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:5000/api/admin/approved-properties', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } // Include JWT token for authentication
+                });
+                const approvedProperties = await res.json();
+                if (!approvedProperties.length) {
+                    tableBody.innerHTML = '<tr><td colspan="8">No approved properties.</td></tr>';
+                    return;
+                }
+                renderApprovedProperties(approvedProperties);
+            } catch (err) {
+                tableBody.innerHTML = '<tr><td colspan="8">Error loading approved properties.</td></tr>';
+            }
+        }
+
+        function renderApprovedProperties(properties) {
+            const tableBody = document.querySelector('#approvedPropertiesTable tbody');
+            tableBody.innerHTML = '';
+            properties.forEach(property => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${property.title}</td>
+                    <td>${property.location}</td>
+                    <td>${property.price}</td>
+                    <td>${property.description}</td>
+                    <td>${property.beds}</td>
+                    <td>${property.baths}</td>
+                    <td>${property.type}</td>
+                    <td>${property.ownerPhone}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        async function loadAllProperties() {
+            const tableBody = document.querySelector('#allPropertiesTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:5000/api/admin/all-properties', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } // Include JWT token for authentication
+                });
+                const allProperties = await res.json();
+                if (!allProperties.length) {
+                    tableBody.innerHTML = '<tr><td colspan="9">No properties found.</td></tr>';
+                    return;
+                }
+                renderAllProperties(allProperties);
+            } catch (err) {
+                tableBody.innerHTML = '<tr><td colspan="9">Error loading properties.</td></tr>';
+            }
+        }
+
+        function renderAllProperties(properties) {
+            const tableBody = document.querySelector('#allPropertiesTable tbody');
+            tableBody.innerHTML = '';
+            properties.forEach(property => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${property.title}</td>
+                    <td>${property.location}</td>
+                    <td>${property.price}</td>
+                    <td>${property.description}</td>
+                    <td>${property.beds}</td>
+                    <td>${property.baths}</td>
+                    <td>${property.type}</td>
+                    <td>${property.status}</td>
+                    <td>${property.ownerPhone}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
         }
     </script>
 </body>

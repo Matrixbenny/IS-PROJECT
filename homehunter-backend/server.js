@@ -585,6 +585,17 @@ app.get('/api/admin/pending-properties', async (req, res) => {
     }
 });
 
+// --- Fetch Approved Properties ---
+app.get('/api/admin/approved-properties', async (req, res) => {
+    try {
+        const approvedProperties = await PendingProperty.find({ status: 'approved' }); // Fetch properties with 'approved' status
+        res.status(200).json(approvedProperties);
+    } catch (err) {
+        console.error('Error fetching approved properties:', err.message);
+        res.status(500).json({ message: 'Error fetching properties.', error: err.message });
+    }
+});
+
 // --- Update Property Status ---
 app.patch('/api/admin/property-status/:id', async (req, res) => {
     const { status } = req.body; // 'approved' or 'rejected'
@@ -602,6 +613,17 @@ app.patch('/api/admin/property-status/:id', async (req, res) => {
     } catch (err) {
         console.error('Error updating property status:', err.message);
         res.status(500).json({ message: 'Error updating property status.', error: err.message });
+    }
+});
+
+// --- Fetch All Properties ---
+app.get('/api/admin/all-properties', async (req, res) => {
+    try {
+        const allProperties = await PendingProperty.find(); // Fetch all properties regardless of status
+        res.status(200).json(allProperties);
+    } catch (err) {
+        console.error('Error fetching all properties:', err.message);
+        res.status(500).json({ message: 'Error fetching properties.', error: err.message });
     }
 });
 
